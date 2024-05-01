@@ -7,12 +7,12 @@ THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR P
 YOU HAVE BEEN WARNED
 
 # WEAKNESS/KNOWN BUG AND FEATURE
-## FEATURE:
+### FEATURE:
 * Driverless protection (Rootkit and spyware worry free :D)
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
 
-## Known Weakness and Bug:
+### Known Weakness and Bug:
 * Sometimes close other app and process during detection 
 * Could Miss detection (because point 6)
 * Could trigger Bluescreen ( <0.5% chance , why? check Point 1 ) (hey atleast your file doest encrypted i guess?)
