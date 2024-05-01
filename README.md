@@ -7,7 +7,7 @@ THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR P
 YOU HAVE BEEN WARNED
 
 # WEAKNESS/KNOWN BUG AND FEATURE
-### FEATURE:
+### FEATURES:
 * Driverless protection (Rootkit and spyware worry free :D)
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
