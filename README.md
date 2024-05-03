@@ -1,4 +1,4 @@
-# RansomPyShield by XiAnzheng
+# RansomPyShield - Antiransomware
 
 TO BE RELEASE AFTER MY UNI ACCEPTED MY PAPER AND THESIS!
 Whats this for? this is my driverless Antiransomware app using Honeypot technique & YARA Rule
