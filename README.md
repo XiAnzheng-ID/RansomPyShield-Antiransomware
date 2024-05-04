@@ -5,6 +5,7 @@ Whats this for? this is my driverless Antiransomware app using Honeypot techniqu
 
 THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
 YOU HAVE BEEN WARNED
+<a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
@@ -19,6 +20,8 @@ YOU HAVE BEEN WARNED
 * Ransomware sometimes still can Encrypt some of your file (because my app is signature less , behaviour less , and depends on the honeypot files)
 * Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (this will be fixed when YARA Rule added on my second thesis)
 * Some ransomware can bypass this app by killing the process or check where's my honeypot file and skip it (i probably know how to fix this?)
+* DONT EVER COMPILE IT USING PyInstaler/Cx_Freeze/Nuitka , it will spam your cpu core and thread to Bluescreen
+* Bug on terminal Menu(i will fix it as soon as possible or when GUI is ready)
 
 # To Be Added on my second thesis
 * Real-time scanning using YARA Rules (This should fix some of the known problem)
