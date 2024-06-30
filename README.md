@@ -19,7 +19,7 @@ YOU HAVE BEEN WARNED⚠️\
 * C:\\
 3. Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work\
 4. Turn on my Antiransomware Feature
-5.⚠️CLOSE MY APP THEN REPEAT FROM STEP 3 IF MY APP DETECT A RANSOMWARE(I WILL THINK A WORKAROND WITH THIS PROBLEM)⚠️
+5. ⚠️  
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
