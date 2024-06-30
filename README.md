@@ -3,14 +3,13 @@
 TO BE RELEASE AFTER MY UNI ACCEPTED MY PAPER AND THESIS!
 Whats this for? this is my driverless Antiransomware app using Honeypot technique & YARA Rule
 
-THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
-YOU HAVE BEEN WARNED
+⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
+YOU HAVE BEEN WARNED⚠️\
 <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
 
 # How to Use?
-Run my app , dont turn on the feature yet
-Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
-
+1. Run my App/Script , dont turn on the feature yet\
+2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:\
 * Desktop
 * Download
 * Document
@@ -18,8 +17,10 @@ Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
 * Music
 * Videos
 * C:\\
-
-Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work
+\
+3. Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work\
+4. Turn on my Antiransomware Feature\
+5.⚠️CLOSE MY APP THEN REPEAT FROM STEP 3 IF MY APP DETECT A RANSOMWARE(I WILL THINK A WORKAROND WITH THIS PROBLEM)⚠️
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
