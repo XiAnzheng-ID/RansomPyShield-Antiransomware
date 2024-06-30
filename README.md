@@ -40,7 +40,7 @@ YOU HAVE BEEN WARNED⚠️\
 * YARA Rules (This should fix some of the known problem)
 
 # Tips for fixing some of the weakness
-* rename the folder name of my honeypot folder in the code or check my code and change the logic of my script!
+* Rename the folder name of my honeypot folder in the code or check my code and change the logic of my script!
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app (why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file )
 
 # Tested against (Windows 10) :
