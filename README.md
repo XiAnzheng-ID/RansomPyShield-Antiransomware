@@ -16,15 +16,21 @@ YOU HAVE BEEN WARNED
 ### Known Weakness and Bug:
 * Sometimes close other app and process during detection 
 * Could Miss detection (because point 6)
-* Could trigger Bluescreen ( <0.5% chance , why? check Point 1 ) (hey atleast your file doest encrypted i guess?)
+* Could trigger Bluescreen ( <0.01% chance , why? check Point 1 ) (hey atleast your file doest encrypted i guess?)
 * Ransomware sometimes still can Encrypt some of your file (because my app is signature less , behaviour less , and depends on the honeypot files)
 * Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (this will be fixed when YARA Rule added on my second thesis)
 * Some ransomware can bypass this app by killing the process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Bug on terminal Menu(i will fix it as soon as possible or when GUI is ready)
 
 # To Be Added on my second thesis
-* Real-time scanning using YARA Rules (This should fix some of the known problem)
+* YARA Rules (This should fix some of the known problem)
 
 # Tips for fixing some of the weakness
 * rename the folder name of my honeypot folder in the code or check my code and change the logic of my script!
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app (why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extention file )
+
+# Tested against :
+* Wannacry
+* Lockbit 3.0(Black)
+* Cerber
+* Fantom
