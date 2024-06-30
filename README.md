@@ -8,8 +8,7 @@ YOU HAVE BEEN WARNED
 <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
 
 # How to Use?
-First enable Show Hidden Folder from File Explorer
-Open my "Honey" Folder at:
+First enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
 * Desktop
 * Download
 * Document
