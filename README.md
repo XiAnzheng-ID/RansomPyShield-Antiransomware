@@ -9,7 +9,7 @@ YOU HAVE BEEN WARNED⚠️\
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
-2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:\
+2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
 * Desktop
 * Download
 * Document
