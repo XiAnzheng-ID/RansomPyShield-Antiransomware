@@ -7,8 +7,8 @@ Whats this for? this is my driverless Antiransomware app using Honeypot techniqu
 YOU HAVE BEEN WARNED⚠️
 
 ## Video Proof
-<a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
-<a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
+* <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
+* <a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
