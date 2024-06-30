@@ -16,7 +16,7 @@ Open my "Honey" Folder at:
 * Pictures
 * Music
 * Videos
-* C:\
+* C:\\
 Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work
 
 # WEAKNESS/KNOWN BUG AND FEATURE
