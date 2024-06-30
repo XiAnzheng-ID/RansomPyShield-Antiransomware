@@ -4,8 +4,11 @@ TO BE RELEASE AFTER MY UNI ACCEPTED MY PAPER AND THESIS!
 Whats this for? this is my driverless Antiransomware app using Honeypot technique & YARA Rule
 
 ⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
-YOU HAVE BEEN WARNED⚠️\
-<a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
+YOU HAVE BEEN WARNED⚠️
+
+## Video Proof
+<a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
+<a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
@@ -17,7 +20,7 @@ YOU HAVE BEEN WARNED⚠️\
 * Music
 * Videos
 * C:\\
-3. Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work
+3. Then fill all my "Honey" Folder with dummy file the more file in there the better my Script will work
 4. Turn on my Antiransomware Feature
 5. ⚠️REPEAT FROM STEP 3 IF MY APP DETECT A RANSOMWARE , DONT FORGET TO CLOSE MY APP FIRST ⚠️
 
