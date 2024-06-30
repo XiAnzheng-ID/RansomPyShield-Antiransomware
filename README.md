@@ -7,6 +7,18 @@ THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR P
 YOU HAVE BEEN WARNED
 <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
 
+# How to Use?
+First enable Show Hidden Folder from File Explorer
+Open my "Honey" Folder at:
+* Desktop
+* Download
+* Document
+* Pictures
+* Music
+* Videos
+* C:\
+Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work
+
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
 * Driverless protection (Rootkit and spyware worry free :D)
@@ -29,7 +41,7 @@ YOU HAVE BEEN WARNED
 * rename the folder name of my honeypot folder in the code or check my code and change the logic of my script!
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app (why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file )
 
-# Tested against :
+# Tested against (Windows 10) :
 * Wannacry
 * Lockbit 3.0(Black)
 * Cerber
