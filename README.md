@@ -8,8 +8,8 @@ YOU HAVE BEEN WARNED⚠️\
 <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Sample Testing Video</a>
 
 # How to Use?
-1. Run my App/Script , dont turn on the feature yet\
-2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:\
+1. Run my App/Script , dont turn on the feature yet
+2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
 * Desktop
 * Download
 * Document
@@ -17,7 +17,6 @@ YOU HAVE BEEN WARNED⚠️\
 * Music
 * Videos
 * C:\\
-\
 3. Then fill all my "Honey" Folder with bait file the more file in there the better my Script will work\
 4. Turn on my Antiransomware Feature\
 5.⚠️CLOSE MY APP THEN REPEAT FROM STEP 3 IF MY APP DETECT A RANSOMWARE(I WILL THINK A WORKAROND WITH THIS PROBLEM)⚠️
