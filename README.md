@@ -22,7 +22,7 @@ YOU HAVE BEEN WARNED⚠️
 * C:\\
 3. Then fill all my "Honey" Folder with dummy file the more file in there the better my Script will work
 4. Turn on my Antiransomware Feature
-5. ⚠️REPEAT FROM STEP 3 IF MY APP DETECT A RANSOMWARE , DONT FORGET TO CLOSE MY APP FIRST ⚠️
+5. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED , DONT FORGET TO CLOSE MY APP FIRST ⚠️
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
