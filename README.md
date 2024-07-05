@@ -35,7 +35,6 @@ YOU HAVE BEEN WARNED⚠️
 * Ransomware sometimes still can Encrypt some of your file (because my app is signature less , behaviour less , and depends on the honeypot files)
 * Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (i may or not may know how to add detection against this type of Ransomware)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
-* Ransomware stil can turn off basic protection like windows defender
 
 # To Be Added on my second thesis
 * YARA Rules (This should fix some of the known problem)
