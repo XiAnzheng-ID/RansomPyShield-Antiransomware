@@ -31,10 +31,11 @@ YOU HAVE BEEN WARNED⚠️
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
 
 ### Known Weakness and Bug:
-* Sometimes close other app and process during detection 
+* Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file (because my app is signature less , behaviour less , and depends on the honeypot files)
 * Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (i may or not may know how to add detection against this type of Ransomware)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
+* Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
 # To Be Added on my second thesis
 * YARA Rules (This should fix some of the known problem)
