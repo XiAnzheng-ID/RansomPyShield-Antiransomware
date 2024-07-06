@@ -46,7 +46,7 @@ YOU HAVE BEEN WARNED⚠️
 ```bash
 python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output main.py
 ```
-or
+or if you prefer 1 executable instead
 ```bash
 python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output main.py
 ```
