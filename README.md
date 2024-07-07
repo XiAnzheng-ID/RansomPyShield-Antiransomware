@@ -46,8 +46,8 @@ YOU HAVE BEEN WARNED⚠️
 ```bash
 python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output main.py
 ```
-Why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \n
-Tho there are some Ransomware that encrypt .pyd files the onefile make sure that this app unpack itself in /temp \n
+Why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \
+Tho there are some Ransomware that encrypt .pyd files the onefile make sure that this app unpack itself in /temp \
 Which Ransomware either dont Encrypt or Need time to access that directory which give time this app to detect and kill the Ransomware
 
 # Tested against (Windows 10) :
