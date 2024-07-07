@@ -11,10 +11,10 @@ YOU HAVE BEEN WARNED⚠️
 * <a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
 
 ### How My Script work?
-> First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder
-> Then user will put their Bait and Dummy file which my script will monitor it as long the script still running
-> After user turn on the Realtime Protection my script will take a snapshot of the current running process
-> if something touch the Honeypot folder it will kill all process that newly spawned or running after the snapshot
+First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder \
+Then user will put their Bait and Dummy file which my script will monitor it as long the script still running \
+After user turn on the Realtime Protection my script will take a snapshot of the current running process \
+If something touch the Honeypot folder it will kill all process that newly spawned or running after the snapshot \
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
