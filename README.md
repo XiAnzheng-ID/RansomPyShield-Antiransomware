@@ -9,6 +9,7 @@ YOU HAVE BEEN WARNED⚠️
 ### Video Proof
 * <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
 * <a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
+* <a href="https://www.youtube.com/watch?v=WKGnyCcJn8c">QoL Update</a>
 
 ### How My Script work?
 First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder \
