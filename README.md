@@ -18,17 +18,11 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
-2. Enable Show Hidden Folder from File Explorer, then open my "Honey" Folder at:
-* Desktop
-* Download
-* Document
-* Pictures
-* Music
-* Videos
-* C:\\
-3. Then fill the "Honey" Folder with dummy file, the more file in there the better my Script will work
+2. Press "Open Honeypot Folder"
+3. Then fill the Folder with dummy file
 4. Turn on my Antiransomware Feature
-5. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED , DONT FORGET TO CLOSE MY APP FIRST ⚠️
+5. Let my app do the work
+6. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED IN THEN RansomPyShield FOLDER ⚠️
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
@@ -61,4 +55,4 @@ Which Ransomware either dont Encrypt or Need time to access that directory which
 * Lockbit 3.0(Black)
 * Cerber
 * Fantom
-* BlackChiper (Modified Lockbit 3.0 that attack Indonesia Goverment)
+* BrainChiper (Modified Lockbit 3.0 that attack Indonesia Goverment)
