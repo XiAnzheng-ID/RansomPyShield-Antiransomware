@@ -38,8 +38,12 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
-# To Be Added on my second thesis
+# To Be Added on my next research thesis
 * YARA Rules (This should fix some of the known problem)
+* File & Folder Behaviour Detection
+* Sign based app rule
+* Whitelist or Blacklist rules
+* Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the code and check my code and change the logic of my script!
