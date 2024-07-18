@@ -1,7 +1,6 @@
 # RansomPyShield - Antiransomware
 
-TO BE RELEASE AFTER MY UNI ACCEPTED MY PAPER AND THESIS!
-Whats this for? this is my driverless Antiransomware app using Honeypot technique & YARA Rule
+Whats this for? this is my driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff
 
 ⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
 YOU HAVE BEEN WARNED⚠️
@@ -33,12 +32,12 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 
 ### Known Weakness and Bug:
 * Will close other app and process during detection
-* Ransomware sometimes still can Encrypt some of your file (because my app is signature less , behaviour less , and depends on the honeypot files)
+* Ransomware sometimes still can Encrypt some of your file
 * Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (i may or not may know how to add detection against this type of Ransomware)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
-# To Be Added on my next research thesis
+# To Be Added
 * YARA Rules (This should fix some of the known problem)
 * File & Folder Behaviour Detection
 * Sign based app rule
