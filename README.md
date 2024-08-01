@@ -45,8 +45,8 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 
 # Tips for fixing some of the weakness
-* Rename the folder name of my honeypot folder in the code and check my code and change the logic of my script!
-* Compile my Script using Nuitka into one 1 file executable this can help prevent some Ransomware/Malware kill the Compiled app
+* Rename the folder name of my honeypot folder in the code and check my code and change the logic of my script to your liking!
+* Compile my Script using Nuitka into one file executable this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
 python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output main.py
 ```
