@@ -2,9 +2,10 @@ import os
 import ctypes
 import shutil
 import psutil
+import os
 
 def create_files_folders():
-    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", os.path.expanduser('~')]
+    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users" ,os.path.expanduser('~')]
     for folder in folders:
         path = os.path.join(os.path.expanduser("~"), folder)
         if not os.path.exists(path):
@@ -64,11 +65,12 @@ def is_hidden(path):
         return False  
 
 def clean_and_copy_honey_files():
-    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music"]
+    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
     honeyfiles_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
 
     if not os.path.exists(honeyfiles_path):
         print(f"Path {honeyfiles_path} does not exist.")
+        os.system("exit")
         return
 
     for folder in folders:

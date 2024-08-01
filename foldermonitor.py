@@ -111,6 +111,7 @@ def main():
             directories_to_watch.append(honey_drive_path)
 
     directories_to_watch.extend([
+        "C:\\Users",
         user,
         documents,
         desktop,
@@ -118,6 +119,7 @@ def main():
         download,
         music,
         picture,
+        user,
     ])
     
     threads = []

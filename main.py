@@ -9,9 +9,11 @@ import customtkinter as ctk
 import honeymanager as hm
 import foldermonitor as fm
 
-# Variabel global untuk mengelola status
+# Variabel global untuk mengelola status toggle
 is_protection_on = False
 protection_thread = None
+
+#variabel lain
 appdata_path = os.getenv('LOCALAPPDATA')
 honeyfiles_path = os.path.join(appdata_path, "RansomPyShield")
 
@@ -172,7 +174,7 @@ def main_ui():
     app.mainloop()
 
 if __name__ == "__main__":
-    run_with_uac()
+    run_with_uac() #get Admin Access if run as script
     ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection OFF]")
     print("Realtime Monitor OFF") 
     hm.create_files_folders()
