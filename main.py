@@ -8,19 +8,26 @@ import customtkinter as ctk
 #other script
 import honeymanager as hm
 import foldermonitor as fm
+import getRules as gr
+import yarascan as ys
 
 # Variabel global untuk mengelola status toggle
 is_protection_on = False
 protection_thread = None
 
-#variabel lain
+#Other Folder
 appdata_path = os.getenv('LOCALAPPDATA')
-honeyfiles_path = os.path.join(appdata_path, "RansomPyShield")
+honeyfiles_path = os.path.join(appdata_path, "RansomPyShield", "Honey")
+rules_path = os.path.join(appdata_path, "RansomPyShield", "Rules")
+#getRules
+github_url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
+extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
 
 # Membuat folder RansomPyShield jika belum ada
-if not os.path.exists(honeyfiles_path):
+if not os.path.exists(honeyfiles_path and rules_path):
     try:
         os.makedirs(honeyfiles_path)
+        os.makedirs(rules_path)
     except OSError as e:
         print(f"Failed to create directory {honeyfiles_path}: {e}")
 
@@ -176,6 +183,6 @@ def main_ui():
 if __name__ == "__main__":
     run_with_uac() #get Admin Access if run as script
     ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection OFF]")
-    print("Realtime Monitor OFF") 
     hm.create_files_folders()
+    gr.download_and_extract_github_file(github_url, extract_to)
     main_ui()

@@ -66,7 +66,7 @@ def is_hidden(path):
 
 def clean_and_copy_honey_files():
     folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
-    honeyfiles_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
+    honeyfiles_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Honey")
 
     if not os.path.exists(honeyfiles_path):
         print(f"Path {honeyfiles_path} does not exist.")
