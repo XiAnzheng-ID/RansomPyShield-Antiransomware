@@ -5,7 +5,7 @@ Whats this for? this is my driverless Antiransomware app using Honeypot techniqu
 ⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
 YOU HAVE BEEN WARNED⚠️
 
-⚠️Some Yara Rules that been used by this project are from other repo or people credit to their respective owner(check the yara files for more information about them)⚠️
+⚠️Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)⚠️
 
 ### Video Proof
 * <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
@@ -32,6 +32,13 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Driverless protection (Rootkit and spyware worry free :D)
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
+* Honeypot
+* YARA Forge by YARAHQ For realtime Yara update
+* YARA Rules (By Me and Custom curated from other Public Repo and Place)
+* Exploit Blocker(Based on YARA Rules)
+* Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
+* Leaked & Compromised Digital Sign Blocker(Based on Yara Rules)
+* Convention Engine Yara Rules
 
 ### Known Weakness and Bug:
 * Will close other app and process during detection
@@ -40,7 +47,8 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
-# To Be Added
+# To Be Added (Ideas)
+* Machine-Learning (this might take a long time because i need to learn about ML)
 * Custom Personal Yara Rule usage
 * File & Folder Behaviour Detection
 * Whitelist or Blacklist rules
