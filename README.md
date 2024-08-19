@@ -39,9 +39,7 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
 # To Be Added
-* YARA Rules (This should fix some of the known problem)
 * File & Folder Behaviour Detection
-* Sign based app rule
 * Whitelist or Blacklist rules
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 
