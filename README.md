@@ -33,10 +33,9 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
 * Honeypot
-* YARA Rules that can be updated automatically (By Me and Custom curated from other Public Repo and Place)
+* YARA Rules that can be updated automatically (Custom curated By Me from other Public Repo and Place)
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
-* Leaked & Compromised Digital Sign Blocker(Based on Yara Rules)
 * Convention Engine Yara Rules
 
 ### Known Weakness and Bug:
