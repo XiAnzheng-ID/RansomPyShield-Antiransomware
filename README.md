@@ -36,7 +36,7 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 ### Known Weakness and Bug:
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (i may or not may know how to add detection against this type of Ransomware)
+* Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules to detect em)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 
