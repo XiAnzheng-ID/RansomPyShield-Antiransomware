@@ -13,6 +13,7 @@ import yarascan as ys
 
 # Variabel global untuk mengelola status toggle
 is_protection_on = False
+is_yara_on = False
 protection_thread = None
 
 #Other Folder
@@ -49,7 +50,7 @@ def antiransomware():
     fm.main()
 
 # Run antiransomware in a separate thread
-def run_antiransomware_thread():
+def run_honey_thread():
     global protection_thread
     ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection ON]")
     os.system("cls")
@@ -61,7 +62,7 @@ def run_antiransomware_thread():
     protection_thread.start()
 
 # Stop the antiransomware thread
-def stop_antiransomware_thread():
+def stop_honey_thread():
     fm.stop_monitoring()
     if protection_thread:
         protection_thread.join()
@@ -69,17 +70,44 @@ def stop_antiransomware_thread():
     os.system("cls")
     print("Realtime Monitor OFF") 
 
-# Toggle protection status
-def toggle_protection(button):
+# Toggle Honey status
+def toggle_honey(honeybutton):
     global is_protection_on
     if is_protection_on:
         is_protection_on = False
-        button.configure(text="Antiransomware-[OFF]", fg_color="red")
-        stop_antiransomware_thread()
+        honeybutton.configure(text="Honeypot Monitor-[OFF]", fg_color="red")
+        stop_honey_thread()
     else:
         is_protection_on = True
-        button.configure(text="Antiransomware-[ON]", fg_color="green")
-        run_antiransomware_thread()
+        honeybutton.configure(text="Honeypot Monitor-[ON]", fg_color="green")
+        run_honey_thread()
+
+# Start Yara
+def run_yara_scan_thread():
+    global yara_thread
+    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Yara Scan ON]")
+    print("Yara Scan ON")
+    yara_thread = threading.Thread(target=ys.monitor_processes)
+    yara_thread.start()
+
+# Stop YARA
+def stop_yara_scan_thread():
+    if yara_thread:
+        ys.stop_monitoring()  # Hentikan loop di YARA scan
+        yara_thread.join()
+    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Yara Scan OFF]")
+    print("Yara Scan OFF")
+
+def toggle_yara_exploit(yarabutton):
+    global is_yara_on
+    if is_yara_on:
+        is_yara_on = False
+        yarabutton.configure(text="Yara Scan & Exploit Blocker-[OFF]", fg_color="red")
+        stop_yara_scan_thread()
+    else:
+        is_yara_on = True
+        yarabutton.configure(text="Yara Scan & Exploit Blocker-[ON]", fg_color="green")
+        run_yara_scan_thread()
 
 # Open directory
 def open_directory():
@@ -154,22 +182,24 @@ def main_ui():
     ctk.set_default_color_theme("dark-blue") 
 
     app = ctk.CTk()  # CTk window information
-    app.geometry("500x300")
+    app.geometry("450x250")
     app.title("RansomPyShield")
 
     #Button Section
     # Help Button
     help_button = ctk.CTkButton(master=app, text="Panduan Penggunaan", command=help_ui)
-    help_button.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
+    help_button.grid(row=0, column=2, padx=20, pady=10)
 
     # Button Toggle
-    button = ctk.CTkButton(master=app, text="Antiransomware-[OFF]", command=lambda: toggle_protection(button), fg_color="red")
-    button.place(relx=0.25, rely=0.5, anchor=ctk.CENTER)
+    honeybutton = ctk.CTkButton(master=app, text="Honeypot Monitor-[OFF]", command=lambda: toggle_honey(honeybutton), fg_color="red")
+    honeybutton.grid(row=0, column=1, padx=20, pady=10)
+
+    yarabutton = ctk.CTkButton(master=app, text="Yara Scan & Exploit Blocker-[OFF]", command=lambda: toggle_yara_exploit(yarabutton), fg_color="red")
+    yarabutton.grid(row=1, column=1, padx=20, pady=10)
 
     # Open RansomPyShield folder 
     open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=lambda: open_directory())
-    open_dir_button.place(relx=0.75, rely=0.5, anchor=ctk.CENTER)
-
+    open_dir_button.grid(row=1, column=2, padx=20, pady=10)
     text = '''
             ©Devin Nathaniel(XiAnzheng)@2024
             Universitas Gunadarma
