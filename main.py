@@ -162,7 +162,7 @@ def help_ui():
             - beberapa Ransomware juga mentarget file executable(.exe)
 
             Note: 
-            Jika kalian melihat folder yg bernama Honey itu adalah
+            Jika kalian melihat folder hidden bisa jadi itu adalah
             folder milik Aplikasi ini , tolong jgn di hapus ataupun
             di sentuh karena akan mengurangi efektivitas dan memicu 
             keamanan dari aplikasi ini
@@ -171,7 +171,6 @@ def help_ui():
     label.pack()
 
     app.mainloop()
-
 
 #On UI Close stop all feature
 def on_closing():

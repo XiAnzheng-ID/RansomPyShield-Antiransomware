@@ -23,11 +23,9 @@ def get_rules(github_url, zip_filename, extract_to):
 if __name__ == "__main__":
     # URLs file zip dari GitHub
     rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
-    yaraForge = "https://github.com/YARAHQ/yara-forge/releases/download/20240818/yara-forge-rules-extended.zip"
     
     # Nama file yang akan diunduh
     zip_rule = "Rule.zip"
-    zip_yaraForge = "yara-forge-rules-extended.zip"
     
     # Folder tujuan untuk mengextract file
     extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
@@ -38,5 +36,4 @@ if __name__ == "__main__":
 
     # Download dan extract dari dua URL yang berbeda
     get_rules(rule, zip_rule, extract_to)
-    get_rules(yaraForge, zip_yaraForge, extract_to)
     print("All Yara Rules has been updated successfully")
