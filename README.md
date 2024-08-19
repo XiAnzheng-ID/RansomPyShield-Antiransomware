@@ -5,6 +5,8 @@ Whats this for? this is my driverless Antiransomware app using Honeypot techniqu
 ⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
 YOU HAVE BEEN WARNED⚠️
 
+⚠️Some Yara Rules that been used by this project are from other repo or people credit to their respective owner(check the yara files for more information about them)⚠️
+
 ### Video Proof
 * <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
 * <a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
