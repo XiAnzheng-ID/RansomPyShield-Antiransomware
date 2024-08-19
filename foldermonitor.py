@@ -10,8 +10,16 @@ from watchdog.events import FileSystemEventHandler
 # Global flag to control monitoring
 stop_flag = threading.Event()
 observers = []
+notification_lock = threading.Lock()  # Lock for controlling notification
 
-#display MessageBox 
+def stop_monitoring():
+    stop_flag.set()
+    for observer in observers:
+        observer.stop()
+        observer.join()
+    observers.clear()
+
+# Display MessageBox 
 def show_message_box():
     winsound.MessageBeep(winsound.MB_ICONASTERISK)  # Notification sound
     ctypes.windll.user32.MessageBoxW(0, "RANSOMWARE ACTIVITY DETECTED, PLEASE SCAN YOUR SYSTEM", "Ransomware Detected", 0x30 | 0x1000)  # MSGBOX
@@ -21,24 +29,29 @@ class MyHandler(FileSystemEventHandler):
     def __init__(self):
         self.initial_processes = get_running_processes()
         self.processes_to_kill = set()  # Set untuk menyimpan PID proses yang harus dibunuh
+        self.notified = False  # Flag to check if notification is already shown
 
     def on_any_event(self, event):
         honey_folder = "Honey"  # Honeypot Folder name
         if honey_folder in event.src_path:
             last_process_pids = self.get_new_processes_pids() # Add new process PID that been detected
             if last_process_pids:
-                self.processes_to_kill.update(last_process_pids)  #Kill all process after detection
+                self.processes_to_kill.update(last_process_pids)  # Kill all processes after detection
                 self.terminate_processes()
 
-    #New Process List
+    # New Process List
     def get_new_processes_pids(self):
         current_processes = get_running_processes()
         new_processes = set(current_processes.keys()) - set(self.initial_processes.keys())
         return new_processes
 
     def terminate_processes(self):
-        msg_thread = threading.Thread(target=show_message_box)
-        msg_thread.start()
+        with notification_lock:
+            if not self.notified:
+                msg_thread = threading.Thread(target=show_message_box)
+                msg_thread.start()
+                self.notified = True  # Set the flag to prevent further notifications
+
         print(f"RANSOMWARE ACTIVITY DETECTED!!!, LOG:{time.strftime('%Y-%m-%d %H:%M:%S')}")
         print("KILLED PROCESS:")
         for pid in list(self.processes_to_kill):
@@ -46,16 +59,20 @@ class MyHandler(FileSystemEventHandler):
                 process = psutil.Process(pid)
                 process_name = process.name()
                 process_path = process.exe()
-                start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(process.create_time()))  # process startime
+                start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(process.create_time()))  # Process start time
                 process.kill()  # Kill process
-                end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # process killed time
+                end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # Process killed time
                 print(f"{process_name} dir:{process_path} PID: {pid}")
                 print(f"Process started at: {start_time} and terminated at: {end_time}\n")
                 self.processes_to_kill.remove(pid)  # Remove from list after kill
             except psutil.NoSuchProcess:
                 self.processes_to_kill.remove(pid)  # Remove from list if process no longer exists
             except Exception as e:
-                print(f"Error Killing {process_name} dir:{process_path} dengan PID {pid}: {e}\n")
+                print(f"Error killing {process_name} dir:{process_path} dengan PID {pid}: {e}\n")
+
+        # Reset the notification flag after processes are terminated
+        with notification_lock:
+            self.notified = False
 
 # Process Snapshot
 def get_running_processes():
@@ -82,17 +99,10 @@ def monitor_directory(directory):
     observer.stop()
     observer.join()
 
-def stop_monitoring():
-    stop_flag.set()
-    for observer in observers:
-        observer.stop()
-        observer.join()
-    observers.clear()
-
 def main():
     global stop_flag
     stop_flag.clear()
-    # user directory
+    # User directory
     user = os.path.expanduser("~")
     documents = os.path.join(user, "Documents")
     desktop = os.path.join(user, "Desktop")
@@ -101,7 +111,7 @@ def main():
     music = os.path.join(user, "Music")
     picture = os.path.join(user, "Pictures")
 
-    # drive path
+    # Drive path
     drives = psutil.disk_partitions()
     directories_to_watch = []
     for drive in drives:

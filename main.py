@@ -20,9 +20,6 @@ protection_thread = None
 appdata_path = os.getenv('LOCALAPPDATA')
 honeyfiles_path = os.path.join(appdata_path, "RansomPyShield", "Honey")
 rules_path = os.path.join(appdata_path, "RansomPyShield", "Rules")
-#getRules
-github_url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
-extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
 
 # Membuat folder RansomPyShield jika belum ada
 if not os.path.exists(honeyfiles_path and rules_path):
@@ -49,10 +46,10 @@ def run_with_uac():
 def antiransomware():
     fm.main()
 
-# Run antiransomware in a separate thread
+# Run Honey
 def run_honey_thread():
     global protection_thread
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection ON]")
+    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection ON]")
     os.system("cls")
     print("Realtime Monitor ON [Honeypot]")
     # Bersihkan dan salin file ke folder "Honey"
@@ -61,12 +58,12 @@ def run_honey_thread():
     protection_thread = threading.Thread(target=antiransomware)
     protection_thread.start()
 
-# Stop the antiransomware thread
+# Stop the Honey thread
 def stop_honey_thread():
     fm.stop_monitoring()
     if protection_thread:
         protection_thread.join()
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection OFF]")
+    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection OFF]")
     os.system("cls")
     print("Realtime Monitor OFF") 
 
@@ -85,7 +82,6 @@ def toggle_honey(honeybutton):
 # Start Yara
 def run_yara_scan_thread():
     global yara_thread
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Yara Scan ON]")
     print("Yara Scan ON")
     yara_thread = threading.Thread(target=ys.monitor_processes)
     yara_thread.start()
@@ -95,7 +91,6 @@ def stop_yara_scan_thread():
     if yara_thread:
         ys.stop_monitoring()  # Hentikan loop di YARA scan
         yara_thread.join()
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Yara Scan OFF]")
     print("Yara Scan OFF")
 
 def toggle_yara_exploit(yarabutton):
@@ -124,6 +119,7 @@ def help_ui():
     app = ctk.CTk()
     app.geometry("500x300")
     app.title("Panduan")
+    
 
     frame = ctk.CTkScrollableFrame(app, 
                                    width=500,
@@ -176,14 +172,30 @@ def help_ui():
 
     app.mainloop()
 
+
+#On UI Close stop all feature
+def on_closing():
+    global is_protection_on, is_yara_on, app
+
+    if is_protection_on:
+        stop_honey_thread()
+
+    if is_yara_on:
+        stop_yara_scan_thread()
+    
+    app.destroy()
+
 def main_ui():
+    global app
     #Themes
     ctk.set_appearance_mode("System")  
     ctk.set_default_color_theme("dark-blue") 
 
-    app = ctk.CTk()  # CTk window information
+    # CTk window information
+    app = ctk.CTk()  
     app.geometry("450x250")
     app.title("RansomPyShield")
+    app.protocol("WM_DELETE_WINDOW", on_closing)
 
     #Button Section
     # Help Button
@@ -200,6 +212,8 @@ def main_ui():
     # Open RansomPyShield folder 
     open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=lambda: open_directory())
     open_dir_button.grid(row=1, column=2, padx=20, pady=10)
+
+    #Random Text
     text = '''
             ©Devin Nathaniel(XiAnzheng)@2024
             Universitas Gunadarma
@@ -211,8 +225,22 @@ def main_ui():
     app.mainloop()
 
 if __name__ == "__main__":
-    run_with_uac() #get Admin Access if run as script
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v10.07.2024 [Protection OFF]")
+    run_with_uac()
+    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection OFF]")
     hm.create_files_folders()
-    gr.download_and_extract_github_file(github_url, extract_to)
+
+    # get YARA rules
+    rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
+    yaraForge = "https://github.com/YARAHQ/yara-forge/releases/download/20240818/yara-forge-rules-extended.zip"
+    zip_rule = "Rule.zip"
+    zip_yaraForge = "yara-forge-rules-extended.zip"
+    extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
+
+    try:
+        gr.get_rules(rule, zip_rule, extract_to)
+        gr.get_rules(yaraForge, zip_yaraForge, extract_to)
+        print("All Yara Rules has been updated successfully")
+    except Exception:
+        print("Failed to update Yara rules. Check your internet connection and re-open this app to update Yara rules.")
+    
     main_ui()
