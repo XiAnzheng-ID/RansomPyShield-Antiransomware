@@ -12,6 +12,7 @@ YOU HAVE BEEN WARNED⚠️
 * <a href="https://www.youtube.com/watch?v=Gk2ERkQ_MAs">Optimization Test</a>
 * <a href="https://www.youtube.com/watch?v=WKGnyCcJn8c">QoL Update</a>
 * <a href="https://www.youtube.com/watch?v=RsOikfXwLHg">Stable Release</a>
+* <a href="https://www.youtube.com/watch?v=rz8vNeoxVVE">Yara Implementation</a>
 
 ### How My Script work?
 First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder) \
