@@ -41,9 +41,11 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 ### Known Weakness and Bug:
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Doest detect fileless ransomware eg(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules to detect em)
+* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules and Honeypot to detect em)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
+* if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
+* Terminal Log kinda bugged now , iam still working on fixing it
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML)
