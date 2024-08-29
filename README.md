@@ -40,14 +40,14 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
 * Custom Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
-* Blacklist based on Sha256 hash from Malware Bazaar API (only the newest 1000 list) (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
+* Blacklist based on Sha256 hash from Malware Bazaar "Query tag" API (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 
 ### Known Weakness and Bug:
-* Terminal Log & Notification kinda bugged now , iam still working on fixing it
-* there is a chance of False Positive , if this happen just close the app (report if you can , screenshot the Terminal Log output)
+* Terminal Log & Notification kinda bugged now (Kinda Spam) , iam still working on fixing it
+* there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules , Honeypot , Hash)
+* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
