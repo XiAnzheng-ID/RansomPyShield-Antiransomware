@@ -6,6 +6,7 @@ Whats this for? this is my driverless Antiransomware app using Honeypot techniqu
 YOU HAVE BEEN WARNED⚠️
 
 ⚠️Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)⚠️
+Report any False Positive and Missed Detection if you can , i really appriciate it
 
 ### Video Proof
 * <a href="https://www.youtube.com/watch?v=9rO8qLU-3vE">Beta 1</a>
@@ -41,13 +42,14 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Blacklist based on Sha256 hash from Malware Bazaar API (only the newest 1000 list) (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 
 ### Known Weakness and Bug:
+* Terminal Log & Notification kinda bugged now , iam still working on fixing it
+* there is a chance of False Positive , if this happen just close the app (report if you can , screenshot the Terminal Log output)
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
 * Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules , Honeypot , Hash)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
-* Terminal Log & Notification kinda bugged now , iam still working on fixing it
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
@@ -71,3 +73,4 @@ Which Ransomware either dont Encrypt or Need time to access that directory which
 * Cerber
 * Fantom
 * BrainChiper (Modified Lockbit 3.0 that attack Indonesia Goverment)
+* And some other random Ransomware
