@@ -38,7 +38,7 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
 * Custom Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
-* Blacklist based on Sha256 hash from Malware Bazaar API (only the newest 1000 list) ((<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
+* Blacklist based on Sha256 hash from Malware Bazaar API (only the newest 1000 list) (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 
 ### Known Weakness and Bug:
 * Will close other app and process during detection
