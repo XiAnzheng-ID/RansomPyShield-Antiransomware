@@ -20,6 +20,7 @@ is_blacklist_on = False
 protection_thread = None
 yara_thread = None
 blacklist_thread = None
+app_version = "29.08.2024"
 
 # Other Folder
 appdata_path = os.getenv('LOCALAPPDATA')
@@ -54,7 +55,7 @@ def antiransomware():
 # Run Honey
 def run_honey_thread():
     global protection_thread
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection ON]")
+    ctypes.windll.kernel32.SetConsoleTitleW(f"RansomPyShield Log , {app_version} [Protection ON]")
     os.system("cls")
     print("Realtime Monitor ON [Honeypot]")
     # Bersihkan dan salin file ke folder "Honey"
@@ -68,7 +69,7 @@ def stop_honey_thread():
     fm.stop_monitoring()
     if protection_thread:
         protection_thread.join()
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection OFF]")
+    ctypes.windll.kernel32.SetConsoleTitleW(f"RansomPyShield Log , {app_version} [Protection OFF]")
     os.system("cls")
     print("Realtime Monitor OFF") 
 
@@ -100,7 +101,6 @@ def stop_blacklist_thread():
         # Contoh jika ada fungsi stop_monitoring() di monitor.py
         # monitor.stop_monitoring()  # Hentikan loop di blacklist monitoring
         blacklist_thread.join()
-    print("Blacklist Monitoring OFF")
 
 def toggle_blacklist(blacklist_button):
     global is_blacklist_on
@@ -134,7 +134,7 @@ def toggle_protection(protection_button):
         protection_button.configure(text="Protection-[ON]", fg_color="green")
 
         # Set up log window title and clean terminal
-        ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection ON]")
+        ctypes.windll.kernel32.SetConsoleTitleW(f"RansomPyShield Log , {app_version} [Protection ON]")
         os.system("cls")
         print("Realtime Monitor ON [Honeypot]")
         print("Yara Scan ON")
@@ -270,7 +270,7 @@ def main_ui():
 
 if __name__ == "__main__":
     run_with_uac()
-    ctypes.windll.kernel32.SetConsoleTitleW("RansomPyShield Log , v19.08.2024 [Protection OFF]")
+    ctypes.windll.kernel32.SetConsoleTitleW(f"RansomPyShield Log , {app_version} [Protection OFF]")
     hm.create_files_folders()
 
     # Get YARA rules
