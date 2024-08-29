@@ -34,32 +34,32 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
 * Honeypot
-* YARA Rules that can be updated automatically (Custom curated By Me from other Public Repo and Place)
+* YARA Rules that can be updated automatically (<a href="https://github.com/InQuest/awesome-yara">Custom curated By Me from other Public Repo and Place(InQuest awesome-yara)</a>)
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
-* Convention Engine Yara Rules
+* Custom Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
+* Blacklist based on Sha256 hash from Malware Bazaar API (only the newest 1000 list) ((<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 
 ### Known Weakness and Bug:
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules and Honeypot to detect em)
+* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app dependd heavily on Yara Rules , Honeypot , Hash)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
-* Terminal Log kinda bugged now , iam still working on fixing it
+* Terminal Log & Notification kinda bugged now , iam still working on fixing it
 
 # To Be Added (Ideas)
-* Machine-Learning (this might take a long time because i need to learn about ML)
+* Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
 * Custom Personal Yara Rule usage
 * File & Folder Behaviour Detection
-* Whitelist or Blacklist rules
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the code and check my code and change the logic of my script to your liking!
 * Compile my Script using Nuitka into one file executable this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
-python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output main.py
+python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
 ```
 Why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \
 Tho there are some Ransomware that encrypt .pyd files the onefile make sure that this app unpack itself in /temp \
