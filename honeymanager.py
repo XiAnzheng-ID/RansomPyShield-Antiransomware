@@ -4,6 +4,9 @@ import shutil
 import psutil
 import os
 
+folder_name = "Honey"
+file_name = "Honey.txt"
+
 def create_files_folders():
     folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users" ,os.path.expanduser('~')]
     for folder in folders:
@@ -12,7 +15,7 @@ def create_files_folders():
             os.makedirs(path)
 
         # Honey folder in each folders
-        honey_folder_path = os.path.join(path, "Honey")
+        honey_folder_path = os.path.join(path, folder_name)
         if not os.path.exists(honey_folder_path):
             os.makedirs(honey_folder_path)
 
@@ -21,7 +24,7 @@ def create_files_folders():
             ctypes.windll.kernel32.SetFileAttributesW(honey_folder_path, 2) 
 
         # Honey.txt on each folders
-        honey_txt_path = os.path.join(path, "Honey.txt")
+        honey_txt_path = os.path.join(path, file_name)
         if not os.path.exists(honey_txt_path):
             with open(honey_txt_path, "w") as file:
                 for i in range(1000):
@@ -34,7 +37,7 @@ def create_files_folders():
     # Honey folder and Honey.txt on all drives
     for drive in get_all_drives():
         if os.access(drive, os.W_OK):  # Check if drive is writable
-            honey_folder_path_drive = os.path.join(drive, "Honey")
+            honey_folder_path_drive = os.path.join(drive, folder_name)
             if not os.path.exists(honey_folder_path_drive):
                 os.makedirs(honey_folder_path_drive)
 
@@ -43,11 +46,11 @@ def create_files_folders():
                 ctypes.windll.kernel32.SetFileAttributesW(honey_folder_path_drive, 2)
 
             # Honey.txt on each drive
-            honey_txt_path_drive = os.path.join(drive, "Honey.txt")
+            honey_txt_path_drive = os.path.join(drive, file_name)
             if not os.path.exists(honey_txt_path_drive):
                 with open(honey_txt_path_drive, "w") as file:
                     for i in range(1000):
-                        file.write(f"Hello from Honey.txt on drive {drive}! (Line {i+1})\n")
+                        file.write(f"Hello from {file_name} on drive {drive}! (Line {i+1})\n")
 
             # Hide Honey.txt on drive
             if not is_hidden(honey_txt_path_drive):
@@ -74,14 +77,14 @@ def clean_and_copy_honey_files():
         return
 
     for folder in folders:
-        honey_folder_path = os.path.join(os.path.expanduser("~"), folder, "Honey")
+        honey_folder_path = os.path.join(os.path.expanduser("~"), folder, folder_name)
         if os.path.exists(honey_folder_path):
             clean_and_copy(honey_folder_path, honeyfiles_path)
 
     # Honey folder on all drives
     for drive in get_all_drives():
         if os.access(drive, os.W_OK):  # Check if drive is writable
-            honey_folder_path_drive = os.path.join(drive, "Honey")
+            honey_folder_path_drive = os.path.join(drive, folder_name)
             if os.path.exists(honey_folder_path_drive):
                 clean_and_copy(honey_folder_path_drive, honeyfiles_path)
 

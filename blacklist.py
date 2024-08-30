@@ -38,43 +38,46 @@ def calculate_sha256(file_path):
         print(f"Error reading file for hash calculation: {e}")
     return hash_sha256.hexdigest()
 
+def get_current_processes():
+    #Retrieve a set of currently running process PIDs when the monitoring starts
+    current_processes = set()
+    for proc in psutil.process_iter(['pid']):
+        try:
+            current_processes.add(proc.info['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return current_processes
+
 def monitor_hashes(hash_file):
     hashes = read_hashes_from_file(hash_file)
-    known_processes = set()  # Track known processes
+    known_processes = get_current_processes()  # Set initial whitelist of running processes
 
     while not stop_event.is_set():
-        current_processes = set()
         for proc in psutil.process_iter(['pid', 'name']):
             try:
                 # Skip the System Idle Process with PID 0
                 if proc.info['pid'] == 0:
                     continue
 
-                # Collect current processes
-                current_processes.add(proc.info['pid'])
-
+                # Only scan newly detected processes (not in the initial whitelist)
                 if proc.info['pid'] not in known_processes:
-                    known_processes.add(proc.info['pid'])  # Mark process as known
+                    known_processes.add(proc.info['pid'])  # Add new process to known list
                     executable_path = proc.exe()
                     if os.path.exists(executable_path):
                         file_hash = calculate_sha256(executable_path)
                         if file_hash in hashes:
                             print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
-                            proc.terminate()  # Terminate the process
+                            proc.kill()  # Terminate the process
                             print(f"Process {proc.info['pid']} terminated")
             except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
-                # Print specific error messages to debug
                 print(f"Error accessing process: {e}")
                 continue
             except Exception as e:
                 print(f"Unexpected error: {e}")
-
-        # Sleep for a short period before checking again
-        time.sleep(0.1)
+        time.sleep(1) 
 
     print("Blacklist monitoring stopped.")
 
-
-# if __name__ == "__main__":
-#     file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Hashes.txt")
-#     start_monitoring_thread(file_path)
+if __name__ == "__main__":
+    file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Hashes.txt")
+    start_monitoring_thread(file_path)

@@ -11,6 +11,7 @@ from watchdog.events import FileSystemEventHandler
 stop_flag = threading.Event()
 observers = []
 notification_lock = threading.Lock()  # Lock for controlling notification
+folder_name = "Honey"
 
 def stop_monitoring():
     stop_flag.set()
@@ -32,7 +33,7 @@ class MyHandler(FileSystemEventHandler):
         self.notified = False  # Flag to check if notification is already shown
 
     def on_any_event(self, event):
-        honey_folder = "Honey"  # Honeypot Folder name
+        honey_folder = folder_name  # Honeypot Folder name
         if honey_folder in event.src_path:
             last_process_pids = self.get_new_processes_pids() # Add new process PID that been detected
             if last_process_pids:
@@ -116,7 +117,7 @@ def main():
     directories_to_watch = []
     for drive in drives:
         drive_letter = drive.device.split()[0]
-        honey_drive_path = os.path.join(drive_letter, "Honey")
+        honey_drive_path = os.path.join(drive_letter, folder_name)
         if os.access(honey_drive_path, os.W_OK):  # Check if drive is writable
             directories_to_watch.append(honey_drive_path)
 
