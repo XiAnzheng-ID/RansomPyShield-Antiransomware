@@ -13,7 +13,7 @@ import yarascan as ys
 import malwarebazaar as mb
 import blacklist as bl
 
-# Variabel global untuk mengelola status toggle
+# Var
 is_protection_on = False
 is_yara_on = False
 is_blacklist_on = False
@@ -279,12 +279,11 @@ if __name__ == "__main__":
     extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
 
     try:
+        print("Updating Hashes & Rules....")
         gr.get_rules(rule, zip_rule, extract_to)
-        print("All Yara Rules has been updated successfully")
-        print("Downloading Blacklist Hashes from Malware Bazaar")
         mb.main()
-        print("Blacklist Hashes has been updated successfully")
+        print("Blacklist Hashes & Yara Rules Successfully updated")
+        main_ui()
     except Exception:
         print("Failed to update one of the protection component. Check your internet connection and re-open this app")
-    
-    main_ui()
+        input("Press anykey to exit")
