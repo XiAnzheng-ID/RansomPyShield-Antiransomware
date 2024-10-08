@@ -58,6 +58,7 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * File & Folder Behaviour Detection
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
+* Simple Anti-Tamper & Self-Defense Mechanism
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the my code
