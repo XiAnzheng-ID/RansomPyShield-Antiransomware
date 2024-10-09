@@ -18,7 +18,7 @@ def stop_monitoring():
     global stop_event
     stop_event.set()  # Set stop event to stop monitoring
 
-def read_hashes_from_file(file_path=os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Hashes.txt")):
+def read_hashes_from_file(file_path):
     hashes = set()
     try:
         with open(file_path, "r") as file:
@@ -39,7 +39,7 @@ def calculate_sha256(file_path):
     return hash_sha256.hexdigest()
 
 def get_current_processes():
-    #Retrieve a set of currently running process PIDs when the monitoring starts
+    # Retrieve a set of currently running process PIDs when the monitoring starts
     current_processes = set()
     for proc in psutil.process_iter(['pid']):
         try:
@@ -51,30 +51,47 @@ def get_current_processes():
 def monitor_hashes(hash_file):
     hashes = read_hashes_from_file(hash_file)
     known_processes = get_current_processes()  # Set initial whitelist of running processes
+    last_mod_time = os.path.getmtime(hash_file)  # Get initial modification time
 
     while not stop_event.is_set():
-        for proc in psutil.process_iter(['pid', 'name']):
-            try:
-                # Skip the System Idle Process with PID 0
-                if proc.info['pid'] == 0:
-                    continue
+        try:
+            # Check if the hash file has been modified
+            current_mod_time = os.path.getmtime(hash_file)
+            if current_mod_time != last_mod_time:
+                print(f"Hash file {hash_file} modified. Reloading hashes.")
+                hashes = read_hashes_from_file(hash_file)  # Reload hashes
+                last_mod_time = current_mod_time  # Update modification time
 
-                # Only scan newly detected processes (not in the initial whitelist)
-                if proc.info['pid'] not in known_processes:
-                    known_processes.add(proc.info['pid'])  # Add new process to known list
-                    executable_path = proc.exe()
-                    if os.path.exists(executable_path):
-                        file_hash = calculate_sha256(executable_path)
-                        if file_hash in hashes:
-                            print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
-                            proc.kill()  # Terminate the process
-                            print(f"Process {proc.info['pid']} terminated")
-            except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
-                print(f"Error accessing process: {e}")
-                continue
-            except Exception as e:
-                print(f"Unexpected error: {e}")
-        time.sleep(1) 
+            for proc in psutil.process_iter(['pid', 'name']):
+                try:
+                    # Skip the System Idle Process with PID 0
+                    if proc.info['pid'] == 0:
+                        continue
+
+                    # Only scan newly detected processes (not in the initial whitelist)
+                    if proc.info['pid'] not in known_processes:
+                        known_processes.add(proc.info['pid'])  # Add new process to known list
+                        executable_path = proc.exe()
+                        if os.path.exists(executable_path):
+                            file_hash = calculate_sha256(executable_path)
+                            if file_hash in hashes:
+                                print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
+                                proc.kill()  # Terminate the process
+                                print(f"Process {proc.info['pid']} terminated")
+
+                except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
+                    print(f"Error accessing process: {e}")
+                    continue
+                except Exception as e:
+                    print(f"Unexpected error: {e}")
+            time.sleep(0.1) 
+
+        except FileNotFoundError:
+            print(f"Hash file {hash_file} not found. Waiting for file to be available.")
+            time.sleep(1)
+        except Exception as e:
+            print(f"Unexpected error in monitoring loop: {e}")
+            break
 
     print("Blacklist monitoring stopped.")
 

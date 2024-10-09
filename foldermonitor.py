@@ -7,11 +7,13 @@ import winsound
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Global flag to control monitoring
+# Global flag to control monitoring and notifications
 stop_flag = threading.Event()
 observers = []
 notification_lock = threading.Lock()  # Lock for controlling notification
 folder_name = "Honey"
+cooldown_flag = False  # Flag to control cooldown period for notifications
+cooldown_duration = 5  # Cooldown duration in seconds
 
 def stop_monitoring():
     stop_flag.set()
@@ -24,6 +26,13 @@ def stop_monitoring():
 def show_message_box():
     winsound.MessageBeep(winsound.MB_ICONASTERISK)  # Notification sound
     ctypes.windll.user32.MessageBoxW(0, "RANSOMWARE ACTIVITY DETECTED, PLEASE SCAN YOUR SYSTEM", "Ransomware Detected", 0x30 | 0x1000)  # MSGBOX
+
+# Function to set cooldown period for notifications
+def start_notification_cooldown():
+    global cooldown_flag
+    cooldown_flag = True
+    time.sleep(cooldown_duration)  # Sleep for the duration of the cooldown
+    cooldown_flag = False
 
 # Folder Handler
 class MyHandler(FileSystemEventHandler):
@@ -47,14 +56,21 @@ class MyHandler(FileSystemEventHandler):
         return new_processes
 
     def terminate_processes(self):
+        global cooldown_flag
+
         with notification_lock:
-            if not self.notified:
+            # Only notify if not in cooldown period
+            if not cooldown_flag:
                 msg_thread = threading.Thread(target=show_message_box)
                 msg_thread.start()
+                cooldown_thread = threading.Thread(target=start_notification_cooldown)  # Start cooldown period
+                cooldown_thread.start()
+
+                print(f"RANSOMWARE ACTIVITY DETECTED!!!, LOG:{time.strftime('%Y-%m-%d %H:%M:%S')}")
+                print("KILLED PROCESS:")
+
                 self.notified = True  # Set the flag to prevent further notifications
 
-        print(f"RANSOMWARE ACTIVITY DETECTED!!!, LOG:{time.strftime('%Y-%m-%d %H:%M:%S')}")
-        print("KILLED PROCESS:")
         for pid in list(self.processes_to_kill):
             try:
                 process = psutil.Process(pid)

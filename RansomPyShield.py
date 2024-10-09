@@ -87,6 +87,22 @@ def stop_yara_scan_thread():
         yara_thread.join()
     print("Yara Scan OFF")
 
+# Update Yara rules periodically
+def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
+    while True:
+        try:
+            print("Checking for Yara Rules update...")
+            rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
+            zip_rule = "Rule.zip"
+            extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
+            gr.get_rules(rule, zip_rule, extract_to)
+            print("Yara Rules updated successfully.")
+        except Exception as e:
+            print(f"Failed to update Yara Rules: {e}")
+        
+        # Wait for the next interval
+        time.sleep(interval)
+
 # Start Blacklist monitoring
 def run_blacklist_thread():
     global blacklist_thread
@@ -112,6 +128,10 @@ def toggle_blacklist(blacklist_button):
         run_blacklist_thread()
         blacklist_button.configure(text="Blacklist-[ON]", fg_color="green")
         is_blacklist_on = True
+
+def start_hashes_update_thread():
+    update_hashes_thread = threading.Thread(target=mb.update_hashes_scheduler, args=(3600,), daemon=True)
+    update_hashes_thread.start()
 
 # Toggle protection status (both Honeypot and Yara Scan)
 def toggle_protection(protection_button):
@@ -283,6 +303,9 @@ if __name__ == "__main__":
         gr.get_rules(rule, zip_rule, extract_to)
         mb.main()
         print("Blacklist Hashes & Yara Rules Successfully updated")
+        update_thread = threading.Thread(target=update_rules_scheduler, daemon=True)
+        update_thread.start()
+        start_hashes_update_thread()
         main_ui()
     except Exception:
         print("Failed to update one of the protection component. Check your internet connection and re-open this app")
