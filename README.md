@@ -30,6 +30,8 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 5. Let my app do the work
 6. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED IN THEN RansomPyShield FOLDER ⚠️
 
+To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\(Your Username)\AppData\Local\RansomPyShield\Rules
+
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
 * Driverless protection (Rootkit and spyware worry free :D)
@@ -39,22 +41,21 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * YARA Rules that can be updated automatically (<a href="https://github.com/InQuest/awesome-yara">Custom curated By Me from other Public Repo and Place(InQuest awesome-yara)</a>)
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
-* Custom Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
+* Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
 * Blacklist based on Sha256 hash from Malware Bazaar "Query tag" API (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
+* Whitelist (Hardcoded on script to make it hard for threat actor to modify the whitelist system , ill find a workaround to make it easier)
 
 ### Known Weakness and Bug:
-* Terminal Log & Notification kinda bugged now (Kinda Spam) , iam still working on fixing it
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
 * Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker like Petya) (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
+* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker/wiper like Petya) (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
-* Custom Personal Yara Rule usage
 * File & Folder Behaviour Detection
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
@@ -70,8 +71,11 @@ or
 ```bash
 python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
 ```
+after that put it somewhere else like Program Files or Appdata or wherever you want \
+try to put in a place where ransomware will not or rarely target 
+
 Note: Using the onefile option will probably trigger some AV Protection eg Bitdefender \
-Why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \
+Why we do all this? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \
 Do remember that this will not protect the compiled app from getting killed or bypassed by some Advanced or targeted Ransomware attack
 
 # Tested against (Windows 10) :
