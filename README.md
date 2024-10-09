@@ -57,16 +57,22 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 * Custom Personal Yara Rule usage
 * File & Folder Behaviour Detection
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
+* Registry Recovery & Protection
+* Simple Anti-Tamper & Self-Defense Mechanism
 
 # Tips for fixing some of the weakness
-* Rename the folder name of my honeypot folder in the code and check my code and change the logic of my script to your liking!
-* Compile my Script using Nuitka into one file executable this can help prevent some Ransomware/Malware kill the Compiled app
+* Rename the folder name of my honeypot folder in the my code
+* Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
 python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
 ```
+or 
+```bash
+python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
+```
+Note: Using the onefile option will probably trigger some AV Protection eg Bitdefender \
 Why? CX_Freeze and PyInstaller only pack our script with Python Intepreter which a lot of ransomware will Encrypt .py extension file \
-Tho there are some Ransomware that encrypt .pyd files the onefile make sure that this app unpack itself in /temp \
-Which Ransomware either dont Encrypt or Need time to access that directory which give time this app to detect and kill the Ransomware
+Do remember that this will not protect the compiled app from getting killed or bypassed by some Advanced or targeted Ransomware attack
 
 # Tested against (Windows 10) :
 * Wannacry
