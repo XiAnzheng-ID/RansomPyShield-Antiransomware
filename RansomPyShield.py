@@ -20,7 +20,7 @@ is_blacklist_on = False
 protection_thread = None
 yara_thread = None
 blacklist_thread = None
-app_version = "29.08.2024"
+app_version = "10.10.2024"
 
 # Other Folder
 appdata_path = os.getenv('LOCALAPPDATA')
