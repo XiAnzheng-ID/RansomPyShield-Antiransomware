@@ -28,9 +28,9 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 3. Then fill the Folder with dummy file
 4. Turn on my Antiransomware Feature
 5. Let my app do the work
-6. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED IN THEN RansomPyShield FOLDER ⚠️
+6. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED IN THE RansomPyShield FOLDER ⚠️
 
-To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\(Your Username)\AppData\Local\RansomPyShield\Rules
+To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
@@ -44,6 +44,7 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
 * Blacklist based on Sha256 hash from Malware Bazaar "Query tag" API (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 * Whitelist (Hardcoded on script to make it hard for threat actor to modify the whitelist system , ill find a workaround to make it easier)
+* Support your own custom yara rules
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
@@ -60,6 +61,7 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism
+* Panic Button (incase there is a undetected Screenlocker type Ransomware)
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the my code
