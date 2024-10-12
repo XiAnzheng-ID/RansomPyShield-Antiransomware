@@ -61,7 +61,8 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism
-* Panic Button (incase there is a undetected Screenlocker type Ransomware)
+* Panic Button (Screenlocker Type Ransomware fix)
+* Suspicious Exec/Command Filter (some fileless Ransomware detection fix)
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the my code
