@@ -54,6 +54,7 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
+* Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
