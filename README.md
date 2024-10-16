@@ -59,7 +59,6 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
 * Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
-* Powershell command havent tested yet , iam not good with powershell thingy TwT (please report if you find it doest work)
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
 
 # To Be Added (Ideas)
