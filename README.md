@@ -48,7 +48,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Whitelist (Hardcoded on script to make it hard for threat actor to modify the whitelist system , ill find a workaround to make it easier)
 * Support your own custom yara rules
 * Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
-* Suspicious Exec/Command Filter (this will watch all cmd call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
+* Suspicious Exec/Command Filter (this will watch all cmd & PS call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
