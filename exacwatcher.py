@@ -13,12 +13,12 @@ blacklist_commands = [
     #Change Windows Defender , Firewall , Task Manager , Regedit settings
     "set-mppreference",
     "mppreference", 
-    "DisableTaskMgr",
-    "DisableRegedit",
-    "DisableRegistryTools",
-    "FirewallPolicy",
-    "EnableFirewall",
-    "FirewallDisableNotify",
+    "disabletaskMgr",
+    "disableregedit",
+    "disableregistrytools",
+    "firewallpolicy",
+    "enablefirewall",
+    "firewalldisablenotify",
     #file-enumeration
     "get-childItem", 
     "childItem",
