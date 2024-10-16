@@ -32,6 +32,8 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 
 To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
 
+Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift + K , this will kill all new running process after the process snapshot
+
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
 * Driverless protection (Rootkit and spyware worry free :D)
@@ -45,6 +47,8 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Blacklist based on Sha256 hash from Malware Bazaar "Query tag" API (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
 * Whitelist (Hardcoded on script to make it hard for threat actor to modify the whitelist system , ill find a workaround to make it easier)
 * Support your own custom yara rules
+* Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
+* Suspicious Exec/Command Filter (this will watch all cmd call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
@@ -55,6 +59,7 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
 * Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
+* Powershell command havent tested yet , iam not good with powershell thingy TwT (please report if you find it doest work)
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
@@ -62,8 +67,6 @@ To use your own custom Yara Rules just create a new .yar file with name "Custom"
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism
-* Panic Button (Screenlocker Type Ransomware fix)
-* Suspicious Exec/Command Filter (some fileless Ransomware detection fix)
 
 # Tips for fixing some of the weakness
 * Rename the folder name of my honeypot folder in the my code
