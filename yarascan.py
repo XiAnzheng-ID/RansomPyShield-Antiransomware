@@ -15,7 +15,9 @@ EXCLUDED_DIRECTORIES = [
 ]
 
 # List of processes to exclude from killing
-EXCLUDED_PROCESSES = []
+EXCLUDED_PROCESSES = [
+    
+]
 
 def stop_monitoring():
     stop_flag.set()

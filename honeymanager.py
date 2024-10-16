@@ -2,19 +2,19 @@ import os
 import ctypes
 import shutil
 import psutil
-import os
 
 folder_name = "Honey"
 file_name = "Honey.txt"
 
 def create_files_folders():
-    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users" ,os.path.expanduser('~')]
+    
+    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
     for folder in folders:
         path = os.path.join(os.path.expanduser("~"), folder)
         if not os.path.exists(path):
             os.makedirs(path)
 
-        # Honey folder in each folders
+        # Honey folder in each folder
         honey_folder_path = os.path.join(path, folder_name)
         if not os.path.exists(honey_folder_path):
             os.makedirs(honey_folder_path)
@@ -23,7 +23,7 @@ def create_files_folders():
         if not is_hidden(honey_folder_path):
             ctypes.windll.kernel32.SetFileAttributesW(honey_folder_path, 2) 
 
-        # Honey.txt on each folders
+        # Honey.txt on each folder
         honey_txt_path = os.path.join(path, file_name)
         if not os.path.exists(honey_txt_path):
             with open(honey_txt_path, "w") as file:

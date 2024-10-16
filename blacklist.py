@@ -58,7 +58,7 @@ def monitor_hashes(hash_file):
             # Check if the hash file has been modified
             current_mod_time = os.path.getmtime(hash_file)
             if current_mod_time != last_mod_time:
-                print(f"Hash file {hash_file} modified. Reloading hashes.")
+                print(f"Hash file {hash_file} updated. Reloading hashes.")
                 hashes = read_hashes_from_file(hash_file)  # Reload hashes
                 last_mod_time = current_mod_time  # Update modification time
 
@@ -87,10 +87,9 @@ def monitor_hashes(hash_file):
             time.sleep(0.1) 
 
         except FileNotFoundError:
-            print(f"Hash file {hash_file} not found. Waiting for file to be available.")
-            time.sleep(1)
+            print(f"{hash_file} , path cant be found")
         except Exception as e:
-            print(f"Unexpected error in monitoring loop: {e}")
+            print(f"Unexpected error in monitoring: {e}")
             break
 
     print("Blacklist monitoring stopped.")

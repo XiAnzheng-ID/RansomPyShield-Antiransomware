@@ -4,6 +4,8 @@ import elevate
 import threading
 import subprocess
 import time
+import psutil
+import keyboard
 import customtkinter as ctk
 # other scripts
 import honeymanager as hm
@@ -12,6 +14,7 @@ import getRules as gr
 import yarascan as ys
 import malwarebazaar as mb
 import blacklist as bl
+import exacwatcher as bc
 
 # Var
 is_protection_on = False
@@ -91,7 +94,6 @@ def stop_yara_scan_thread():
 def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
     while True:
         try:
-            print("Checking for Yara Rules update...")
             rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
             zip_rule = "Rule.zip"
             extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
@@ -170,12 +172,37 @@ def toggle_protection(protection_button):
         yara_thread = threading.Thread(target=ys.monitor_processes)
         yara_thread.start()
 
+#blockcmd.py
+def toggle_block_cmd(block_cmd_button):
+    global bc
+    if bc.is_monitoring:
+        bc.stop_monitoring()
+        block_cmd_button.configure(text="Exec Watcher[OFF]", fg_color="red")
+    else:
+        bc.start_monitoring()
+        block_cmd_button.configure(text="Exec Watcher[ON]", fg_color="green")
+
 # Open directory
 def open_directory():
     if os.path.exists(honeyfiles_path):
         subprocess.Popen(f'explorer "{honeyfiles_path}"')
     else:
         print(f"Path {honeyfiles_path} does not exist.")
+
+#Panic Button
+def get_process_list():
+    return {proc.pid: proc.name() for proc in psutil.process_iter(['pid', 'name'])}
+
+def kill_new_processes(original_processes):
+    current_processes = get_process_list()
+    new_processes = set(current_processes.keys()) - set(original_processes.keys())
+    
+    for pid in new_processes:
+        print(f"PANIC BUTTON PRESSED: {current_processes[pid]}, killed")
+        psutil.Process(pid).terminate()
+
+snapshot = get_process_list()
+keyboard.add_hotkey('ctrl + shift + k', kill_new_processes, args=(snapshot,))
 
 # UI Section
 def help_ui():
@@ -251,11 +278,9 @@ def on_closing():
 
 def main_ui():
     global app
-    # Themes
     ctk.set_appearance_mode("System")  
     ctk.set_default_color_theme("dark-blue") 
 
-    # CTk window information
     app = ctk.CTk()  
     app.geometry("450x250")
     app.title("RansomPyShield")
@@ -272,6 +297,10 @@ def main_ui():
 
     blacklist_button = ctk.CTkButton(master=app, text="Blacklist-[OFF]", command=lambda: toggle_blacklist(blacklist_button), fg_color="red")
     blacklist_button.grid(row=1, column=1, padx=20, pady=10)
+
+    # Tombol untuk toggle BlockCMD monitoring
+    block_cmd_button = ctk.CTkButton(master=app, text="Exec Watcher[OFF]", command=lambda: toggle_block_cmd(block_cmd_button), fg_color="red")
+    block_cmd_button.grid(row=2, column=1, padx=20, pady=10)
 
     # Open RansomPyShield folder 
     open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=open_directory)
