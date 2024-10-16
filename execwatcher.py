@@ -120,10 +120,9 @@ def resume_process(pid):
 def monitor_new_process():
     global existing_cmd_ps_processes, is_monitoring
 
-    #ignore this
     while True:
         if not is_monitoring:
-            time.sleep(1)  # iam testing new threading sleep time to reduce CPU usage
+            time.sleep(1)  # Sleep untuk mengurangi beban CPU saat monitoring dimatikan
             continue
         
         current_cmd_ps_processes = set()
@@ -149,9 +148,9 @@ def monitor_new_process():
                         print(f"Process with PID {pid} terminated due to encoded command.")
                     elif any(bad_cmd in cmdline for bad_cmd in blacklist_commands):
                         kill_vssadmin_and_wmic(process_list)
-                        print(f"Suspicious command detected: {cmdline}")
+                        print(f"Blocked command detected: {cmdline}")
                         psutil.Process(pid).kill()
-                        print(f"Process with PID {pid} terminated due to Suspicious command.")
+                        print(f"Process with PID {pid} terminated due to blacklist command.")
                     else:
                         # resume if safe
                         resume_process(pid)
@@ -163,4 +162,4 @@ def monitor_new_process():
 if __name__ == "__main__":
     start_monitoring()  # Memulai monitoring saat script dijalankan
     while True:
-        time.sleep(0.1)  # scanning speed
+        time.sleep(0.1)  # Main thread tidak melakukan apa-apa, bisa diganti dengan UI atau logika lain
