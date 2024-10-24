@@ -1,6 +1,7 @@
 import hashlib
 import os
 import psutil
+import shutil
 import threading
 import time
 
@@ -48,6 +49,17 @@ def get_current_processes():
             continue
     return current_processes
 
+def rename_and_move_file(file_path):
+    #Rename the file by changing its extension to .ransom and move it to the same directory
+    try:
+        directory, file_name = os.path.split(file_path)
+        new_file_name = f"{file_name}.ransom"
+        new_path = os.path.join(directory, new_file_name)
+        shutil.move(file_path, new_path)
+        print(f"File {file_path} renamed and moved to {new_path}")
+    except Exception as e:
+        print(f"Error renaming and moving file {file_path}: {e}")
+
 def monitor_hashes(hash_file):
     hashes = read_hashes_from_file(hash_file)
     known_processes = get_current_processes()  # Set initial whitelist of running processes
@@ -62,7 +74,7 @@ def monitor_hashes(hash_file):
                 hashes = read_hashes_from_file(hash_file)  # Reload hashes
                 last_mod_time = current_mod_time  # Update modification time
 
-            for proc in psutil.process_iter(['pid', 'name']):
+            for proc in psutil.process_iter(['pid', 'name', 'exe']):
                 try:
                     # Skip the System Idle Process with PID 0
                     if proc.info['pid'] == 0:
@@ -71,7 +83,7 @@ def monitor_hashes(hash_file):
                     # Only scan newly detected processes (not in the initial whitelist)
                     if proc.info['pid'] not in known_processes:
                         known_processes.add(proc.info['pid'])  # Add new process to known list
-                        executable_path = proc.exe()
+                        executable_path = proc.info['exe']
                         if os.path.exists(executable_path):
                             file_hash = calculate_sha256(executable_path)
                             if file_hash in hashes:
@@ -79,12 +91,15 @@ def monitor_hashes(hash_file):
                                 proc.kill()  # Terminate the process
                                 print(f"Process {proc.info['pid']} terminated")
 
+                                # Rename and move the file after killing the process
+                                rename_and_move_file(executable_path)
+
                 except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
                     print(f"Error accessing process: {e}")
                     continue
                 except Exception as e:
                     print(f"Unexpected error: {e}")
-            time.sleep(0.1) 
+            time.sleep(0.1)
 
         except FileNotFoundError:
             print(f"{hash_file} , path cant be found")

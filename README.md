@@ -1,11 +1,14 @@
 # RansomPyShield - Antiransomware
-
 Whats this for? this is my driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff
+that aim to detect and prevent a total lockdown from a Ransomware attack in case your EDR or Anti-malware/virus/ransomware failed to detect a Zero day or targeted Attack (Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
 
-⚠️THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
-YOU HAVE BEEN WARNED⚠️
-
-⚠️Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)⚠️
+### ⚠️DISCLAIMER⚠️
+* THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
+* Some Advanced Targeted Ransomware Attack can still bypass this app
+* Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)
+* There is a chance some of your files still be encrypted (first and second deep folder&file from root volume is expected to be encrypted)
+* Made to be compatible/run with other EDR/Security Program (Windows Defender is not Recommended)
+* This app only Scan & Protect on a folder that Ransomware and other Malware mostly used to spread and infect (Compile your own version for added protection)
 
 Report any False Positive and Missed Detection if you can , i really appriciate it
 
@@ -17,10 +20,15 @@ Report any False Positive and Missed Detection if you can , i really appriciate 
 * <a href="https://www.youtube.com/watch?v=rz8vNeoxVVE">Yara Implementation</a>
 
 ### How My Script work?
-First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder) \
-Then user will put their Bait and Dummy file which my script will monitor it as long the script still running \
-After user turn on the Realtime Protection my script will take a snapshot of the current running process \
-If something touch the Honeypot folder it will kill all process that newly spawned or running after the snapshot
+* First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder) 
+* Then user will put their Bait and Dummy file which my script will monitor it as long the script still running 
+* After user turn on the Realtime Protection my script will take a snapshot of the current running process, if something touch the Honeypot folder it will kill all process that newly spawned or running after the snapshot
+
+In short : Blacklist > Yara > Behaviour > Honeypot (Lastline of defense)
+
+Execution Watcher will watch all CMD & PS and compare it with my Blacklisted keyword will try to kill those malicious call before it can execute the command
+
+Optional Feature : Panic Button incase some undetected Screenlocker managed to lock the screen
 
 # How to Use?
 1. Run my App/Script , dont turn on the feature yet
@@ -28,7 +36,6 @@ If something touch the Honeypot folder it will kill all process that newly spawn
 3. Then fill the Folder with dummy file
 4. Turn on my Antiransomware Feature
 5. Let my app do the work
-6. ⚠️REPEAT FROM STEP 3 IF THE DUMMY FILE GOT ENCRYPTED IN THE RansomPyShield FOLDER ⚠️
 
 To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
 
@@ -49,6 +56,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Support your own custom yara rules
 * Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
 * Suspicious Exec/Command Filter (this will watch all cmd & PS call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
+* Folder Behaviour Activity
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
@@ -63,7 +71,6 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
-* File & Folder Behaviour Detection
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism

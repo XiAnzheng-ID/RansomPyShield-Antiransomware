@@ -8,33 +8,51 @@ import psutil
 import keyboard
 import customtkinter as ctk
 # other scripts
-import honeymanager as hm
-import foldermonitor as fm
-import getRules as gr
-import yarascan as ys
-import malwarebazaar as mb
-import blacklist as bl
-import exacwatcher as bc
+import honeypot.honeymanager as hm
+import honeypot.foldermonitor as fm
+import yaramodule.getRules as gr
+import yaramodule.yarascan as ys
+import yaramodule.yarascanfile as ysf
+import blacklist.malwarebazaar as mb
+import blacklist.blacklistscan as bs
+import blacklist.blacklistfile as bf
+import protectmodule.execwatcher as ew
+from protectmodule import behaviour
 
 # Var
-is_protection_on = False
-is_yara_on = False
-is_blacklist_on = False
 protection_thread = None
+is_protection_on = False
+
 yara_thread = None
+is_yara_on = False
+
+yara_file_thread = None
+is_yara_file_on = False
+
 blacklist_thread = None
-app_version = "10.10.2024"
+is_blacklist_on = False
+
+blacklist_file_thread = None
+is_blacklist_file_on = False
+observers = None  # List of global Observer objects 
+
+is_behaviour_on = False
+behaviour_thread = None
+
+app_version = "25.10.2024"
 
 # Other Folder
 appdata_path = os.getenv('LOCALAPPDATA')
 honeyfiles_path = os.path.join(appdata_path, "RansomPyShield", "Honey")
 rules_path = os.path.join(appdata_path, "RansomPyShield", "Rules")
+quarantine = os.path.join(appdata_path, "RansomPyShield", "Quarantine")
 
 # Membuat folder RansomPyShield jika belum ada
 if not os.path.exists(honeyfiles_path) and not os.path.exists(rules_path):
     try:
         os.makedirs(honeyfiles_path)
         os.makedirs(rules_path)
+        os.makedirs(quarantine)
     except OSError as e:
         print(f"Failed to create directory {honeyfiles_path}: {e}")
 
@@ -88,7 +106,25 @@ def stop_yara_scan_thread():
     if yara_thread:
         ys.stop_monitoring()  # Hentikan loop di YARA scan
         yara_thread.join()
+        
     print("Yara Scan OFF")
+
+# Start File Scan
+def run_yara_file_thread():
+    global yara_file_thread
+    print("File Scan ON")
+    yara_thread = threading.Thread(target=ys.monitor_processes)
+    yara_file_thread = threading.Thread(target=ysf.start_monitoring)
+    yara_thread.start()
+    yara_file_thread.start()
+
+# Stop File Scan
+def stop_yara_file_thread():
+    if yara_file_thread:
+        ysf.stop_monitoring()
+        yara_thread.join()
+    print("File Scan OFF")
+
 
 # Update Yara rules periodically
 def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
@@ -105,29 +141,43 @@ def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
         # Wait for the next interval
         time.sleep(interval)
 
-# Start Blacklist monitoring
+# Blacklist monitoring
 def run_blacklist_thread():
     global blacklist_thread
     print("Blacklist Monitoring ON")
-    blacklist_thread = bl.start_monitoring_thread(os.path.join(appdata_path, "RansomPyShield", "Hashes.txt"))
+    blacklist_thread = bs.start_monitoring_thread(os.path.join(appdata_path, "RansomPyShield", "Hashes.txt"))
+
+def stop_blacklist_thread():
+    if blacklist_thread:
+        bs.stop_monitoring() 
+        blacklist_thread.join()
+
+def run_blacklist_file_thread():
+    global blacklist_file_thread
+
+    # Start monitoring and store the list of observers (blacklist_file_thread will hold this list)
+    blacklist_file_thread = bf.start_monitoring_threads(os.path.join(appdata_path, "RansomPyShield", "Hashes.txt"))
 
 # Stop Blacklist monitoring
-def stop_blacklist_thread():
-    # Fungsi untuk menghentikan pemantauan blacklist harus ditambahkan di monitor.py
-    if blacklist_thread:
-        bl.stop_monitoring() 
-        # Contoh jika ada fungsi stop_monitoring() di monitor.py
-        # monitor.stop_monitoring()  # Hentikan loop di blacklist monitoring
-        blacklist_thread.join()
+def stop_blacklist_file_thread():
+    global blacklist_file_thread
+
+    if blacklist_file_thread:
+        # Pass the observers to stop_monitoring to stop each one
+        bf.stop_monitoring(blacklist_file_thread)
+        blacklist_file_thread = None  # Reset to None after stopping
 
 def toggle_blacklist(blacklist_button):
     global is_blacklist_on
+    global is_blacklist_file_on
     if is_blacklist_on:
         stop_blacklist_thread()
+        stop_blacklist_file_thread()
         blacklist_button.configure(text="Blacklist-[OFF]", fg_color="red")
         is_blacklist_on = False
     else:
         run_blacklist_thread()
+        run_blacklist_file_thread()
         blacklist_button.configure(text="Blacklist-[ON]", fg_color="green")
         is_blacklist_on = True
 
@@ -135,24 +185,42 @@ def start_hashes_update_thread():
     update_hashes_thread = threading.Thread(target=mb.update_hashes_scheduler, args=(3600,), daemon=True)
     update_hashes_thread.start()
 
+# behaviour monitoring toggle
+def toggle_behaviour_monitoring(behaviour_button):
+    global is_behaviour_on, behaviour_thread
+
+    if is_behaviour_on:
+        # Stop monitoring
+        behaviour.stop_monitoring()  # Menghentikan pemantauan
+        if behaviour_thread:
+            behaviour_thread.join()  # Tunggu hingga thread monitoring selesai
+        behaviour_button.configure(text="Behaviour Monitoring[OFF]", fg_color="red")
+        is_behaviour_on = False
+    else:
+        # Start monitoring in a separate thread
+        behaviour_thread = threading.Thread(target=behaviour.start_monitoring)
+        behaviour_thread.start()
+        behaviour_button.configure(text="Behaviour Monitoring[ON]", fg_color="green")
+        is_behaviour_on = True
+
 # Toggle protection status (both Honeypot and Yara Scan)
 def toggle_protection(protection_button):
-    global is_protection_on, is_yara_on, protection_thread, yara_thread
-    
-    if is_protection_on and is_yara_on:
-        # Matikan kedua fitur jika keduanya aktif
+    global is_protection_on, is_yara_on, is_yara_file_on , protection_thread, yara_thread , yara_file_thread
+    if is_protection_on and is_yara_on and is_yara_file_on:
         is_protection_on = False
         is_yara_on = False
+        is_yara_file_on = False
         protection_button.configure(text="Protection-[OFF]", fg_color="red")
 
         # Hentikan Honeypot dan Yara Scan
         stop_honey_thread()
         stop_yara_scan_thread()
+        stop_yara_file_thread()
 
     else:
-        # Nyalakan kedua fitur jika keduanya tidak aktif
         is_protection_on = True
         is_yara_on = True
+        is_yara_file_on = True
         protection_button.configure(text="Protection-[ON]", fg_color="green")
 
         # Set up log window title and clean terminal
@@ -172,22 +240,31 @@ def toggle_protection(protection_button):
         yara_thread = threading.Thread(target=ys.monitor_processes)
         yara_thread.start()
 
-#blockcmd.py
+        yara_file_thread = threading.Thread(target=ysf.start_monitoring)
+        yara_file_thread.start()
+
+#execwatcher.py
 def toggle_block_cmd(block_cmd_button):
-    global bc
-    if bc.is_monitoring:
-        bc.stop_monitoring()
+    global ew
+    if ew.is_monitoring:
+        ew.stop_monitoring()
         block_cmd_button.configure(text="Exec Watcher[OFF]", fg_color="red")
     else:
-        bc.start_monitoring()
+        ew.start_monitoring()
         block_cmd_button.configure(text="Exec Watcher[ON]", fg_color="green")
 
-# Open directory
-def open_directory():
+# Open honeypot directory
+def open_honeypot_directory():
     if os.path.exists(honeyfiles_path):
         subprocess.Popen(f'explorer "{honeyfiles_path}"')
     else:
         print(f"Path {honeyfiles_path} does not exist.")
+
+def open_quarantine_directory():
+    if os.path.exists(honeyfiles_path):
+        subprocess.Popen(f'explorer "{quarantine}"')
+    else:
+        print(f"Path {quarantine} does not exist.")
 
 #Panic Button
 def get_process_list():
@@ -266,7 +343,7 @@ def help_ui():
 
 # On UI Close stop all features
 def on_closing():
-    global is_protection_on, is_yara_on, app
+    global is_protection_on, is_yara_on, app , is_behaviour_on
 
     if is_protection_on:
         stop_honey_thread()
@@ -274,6 +351,9 @@ def on_closing():
     if is_yara_on:
         stop_yara_scan_thread()
     
+    if is_behaviour_on:
+        behaviour.stop_monitoring()
+        
     app.destroy()
 
 def main_ui():
@@ -282,7 +362,7 @@ def main_ui():
     ctk.set_default_color_theme("dark-blue") 
 
     app = ctk.CTk()  
-    app.geometry("450x250")
+    app.geometry("450x350")
     app.title("RansomPyShield")
     app.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -295,6 +375,7 @@ def main_ui():
     protection_button = ctk.CTkButton(master=app, text="Protection-[OFF]", command=lambda: toggle_protection(protection_button), fg_color="red")
     protection_button.grid(row=0, column=1, padx=20, pady=10)
 
+    # Blacklist Button
     blacklist_button = ctk.CTkButton(master=app, text="Blacklist-[OFF]", command=lambda: toggle_blacklist(blacklist_button), fg_color="red")
     blacklist_button.grid(row=1, column=1, padx=20, pady=10)
 
@@ -302,9 +383,17 @@ def main_ui():
     block_cmd_button = ctk.CTkButton(master=app, text="Exec Watcher[OFF]", command=lambda: toggle_block_cmd(block_cmd_button), fg_color="red")
     block_cmd_button.grid(row=2, column=1, padx=20, pady=10)
 
+    #Behaviour Monitoring
+    behaviour_button = ctk.CTkButton(master=app, text="Behaviour Monitoring[OFF]", command=lambda: toggle_behaviour_monitoring(behaviour_button), fg_color="red")
+    behaviour_button.grid(row=3, column=1, padx=20, pady=10)
+
     # Open RansomPyShield folder 
-    open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=open_directory)
+    open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=open_honeypot_directory)
     open_dir_button.grid(row=1, column=2, padx=20, pady=10)
+
+    # Quarantine Folder
+    open_quarantine_button = ctk.CTkButton(master=app, text="Folder Quarantine", command=open_quarantine_directory)
+    open_quarantine_button.grid(row=2, column=2, padx=20, pady=10)
 
     # Random Text
     text = '''

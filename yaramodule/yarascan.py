@@ -12,7 +12,9 @@ user = os.path.expanduser("~")
 
 # List of directories to exclude from scanning
 EXCLUDED_DIRECTORIES = [
+
 ]
+
 
 # List of processes to exclude from killing
 EXCLUDED_PROCESSES = [
@@ -142,7 +144,7 @@ def monitor_processes():
 
     last_mod_times = {path: os.path.getmtime(path) for path in yara_file_paths}
 
-    while not stop_flag.is_set():  # Check stop_flag to exit loop
+    while not stop_flag.is_set(): # Check stop_flag to exit loop 
         current_pids = set(proc.pid for proc in psutil.process_iter(['pid', 'exe']))  # New PID
         new_pids = current_pids - monitored_pids  # Get New pid
 
