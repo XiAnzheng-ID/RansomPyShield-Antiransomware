@@ -1,15 +1,18 @@
 # RansomPyShield - Antiransomware
-Whats this for? this is my driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff
-that aim to detect and prevent a total lockdown during a Ransomware attack in case your EDR or Anti-malware/virus/ransomware failed to detect a Zero day or targeted Attack (Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
+Whats this for? this is my pre-configuer and driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff 
+That aim to detect and prevent a total lockdown during a Ransomware attack in case your EDR or Security Solution failed to detect a Zero day or targeted Attack 
+(Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
 
 ### ⚠️DISCLAIMER⚠️
 * THIS IS ONLY ACT AS A SECOND OR THIRD LAYER PROTECTION DO NOT USE THIS AS YOUR PRIMARY PROTECTION!!!!
 * Some Advanced Targeted Ransomware Attack can still bypass this app
 * Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)
-* There is a chance some of your files still be encrypted (first and second deep folder&file from root volume is expected to be encrypted)
-* Made to be compatible/run with other EDR/Security Program (Windows Defender is not Recommended)
-* This app only Scan & Protect on a folder that Ransomware and other Malware mostly used to spread and infect (Compile your own version for added protection)
+* This Tool only act as a Lastline of defense incase there is a miss configuration or a failure of your EDR/Security Solution
+* There is a chance some of your files still be encrypted (first and second deep folder&file from root volume is expected to be encrypted during an attack)
+* Made to be compatible/run with other EDR/Security Program
+* This app only Scan & Protect on a folder that Ransomware and other Malware mostly used to spread and infect
 
+(Compile your own version for added protection or again use other EDR/Security Solution)
 Report any False Positive and Missed Detection if you can , i really appriciate it
 
 ### Video Proof
@@ -68,6 +71,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
 * Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
+* Whitelist still hardcoded on code (i will try to find a work-around)
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
@@ -98,4 +102,4 @@ Do remember that this will not protect the compiled app from getting killed or b
 * Cerber
 * Fantom
 * BrainChiper (Modified Lockbit 3.0 that attack Indonesia Goverment)
-* And some other random Ransomware
+* And some other random Ransomware & Screenlocker
