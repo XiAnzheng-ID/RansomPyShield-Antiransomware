@@ -1,5 +1,5 @@
 # RansomPyShield - Antiransomware
-Whats this for? this is my pre-configuer and driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff 
+Whats this for? this is my pre-configure and driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff 
 That aim to detect and prevent a total lockdown during a Ransomware attack in case your EDR or Security Solution failed to detect a Zero day or targeted Attack 
 (Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
 
