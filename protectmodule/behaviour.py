@@ -5,7 +5,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import threading
 
-# Variabel dan counter
+# Variable and counter
 folder_counters = {}
 observers = []
 stop_threads = False
@@ -17,12 +17,11 @@ download = os.path.join(user, "Downloads")
 music = os.path.join(user, "Music")
 picture = os.path.join(user, "Pictures")
 
-# Snapshot proses
+# Process Snapshot
 initial_processes = set(p.pid for p in psutil.process_iter())
 last_activity_time = {}
 reset_interval = 5  # Interval to reset the counter (seconds)
 
-# Daftar direktori yang dipantau
 directories_to_monitor = [
     documents,
     desktop,
@@ -42,26 +41,20 @@ class FolderMonitorHandler(FileSystemEventHandler):
         
         # initialize counters for the folder
         if folder not in folder_counters:
-            folder_counters[folder] = {'delete_count': 0, 'new_file_count': 0, 'read_count': 0}
+            folder_counters[folder] = {'delete_count': 0, 'new_file_count': 0}
             last_activity_time[folder] = time.time()
 
     def on_deleted(self, event):
         global last_activity_time
         folder_counters[self.folder]['delete_count'] += 1
         last_activity_time[self.folder] = time.time()  
-        #print(f"File deleted in {self.folder}: {event.src_path}") #debug print
+        print(f"File deleted in {self.folder}: {event.src_path}") #debug print
 
     def on_created(self, event):
         global last_activity_time
         folder_counters[self.folder]['new_file_count'] += 1
         last_activity_time[self.folder] = time.time()  
-        #print(f"New file created in {self.folder}: {event.src_path}") #debug print
-
-    def on_modified(self, event):
-        global last_activity_time
-        folder_counters[self.folder]['read_count'] += 1
-        last_activity_time[self.folder] = time.time()  
-        #print(f"File read/modified in {self.folder}: {event.src_path}") #debug print
+        print(f"New file created in {self.folder}: {event.src_path}") #debug print
 
 def reset_counters_if_inactive():
     global folder_counters, last_activity_time
@@ -71,7 +64,7 @@ def reset_counters_if_inactive():
             time_since_last_activity = current_time - last_time
             if time_since_last_activity > reset_interval:
                 #print(f"No recent activity in {folder}, resetting counters.") #debug print
-                folder_counters[folder] = {'delete_count': 0, 'new_file_count': 0, 'read_count': 0}
+                folder_counters[folder] = {'delete_count': 0, 'new_file_count': 0}
         time.sleep(1)  # Activity check interval
 
 def kill_new_processes():
@@ -94,15 +87,16 @@ def monitor_folders(directories):
         observers.append(observer)
         print(f"Monitoring started for {directory}")
 
-    # Thread untuk mereset counter
+    # reset counter thread
     reset_thread = threading.Thread(target=reset_counters_if_inactive, daemon=True)
     reset_thread.start()
 
     try:
-        while not stop_threads:  # Periksa flag untuk menghentikan loop
+        while not stop_threads: 
             time.sleep(0.1)
             for folder, counters in folder_counters.items():
-                if counters['delete_count'] >= 5 and counters['new_file_count'] >= 3 and counters['read_count'] >= 2:
+                #change this as you need (the lower the number the aggresive this script will act)
+                if counters['delete_count'] >= 6 and counters['new_file_count'] >= 3 :
                     print(f"Suspicious activity detected in {folder}!")
                     kill_new_processes()
     except KeyboardInterrupt:
@@ -115,7 +109,7 @@ def start_monitoring():
 
 def stop_monitoring():
     global stop_threads
-    stop_threads = True  # Set flag untuk menghentikan thread loop
+    stop_threads = True 
     for observer in observers:
         observer.stop()
     for observer in observers:
