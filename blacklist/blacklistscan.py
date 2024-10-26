@@ -50,13 +50,23 @@ def get_current_processes():
     return current_processes
 
 def rename_and_move_file(file_path):
-    #Rename the file by changing its extension to .ransom and move it to the same directory
+    # Directory for quarantine
+    quarantine_dir = os.path.join(os.path.expanduser("~"), "AppData", "Local", "RansomPyShield")
+    os.makedirs(quarantine_dir, exist_ok=True)
+
     try:
-        directory, file_name = os.path.split(file_path)
-        new_file_name = f"{file_name}.ransom"
-        new_path = os.path.join(directory, new_file_name)
-        shutil.move(file_path, new_path)
-        print(f"File {file_path} renamed and moved to {new_path}")
+        # Split file path to get the original file name and extension
+        file_name = os.path.basename(file_path)
+        file_name_without_ext, file_ext = os.path.splitext(file_name)
+        
+        # Create new file name by appending .ransom after the original extension
+        new_file_name = f"{file_name_without_ext}{file_ext}.ransom"
+        destination_path = os.path.join(quarantine_dir, new_file_name)
+        
+        # Move the file to the quarantine directory
+        shutil.move(file_path, destination_path)
+        print(f"File {file_path} renamed and moved to {destination_path}")
+
     except Exception as e:
         print(f"Error renaming and moving file {file_path}: {e}")
 

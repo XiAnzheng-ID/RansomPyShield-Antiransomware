@@ -5,6 +5,7 @@ import time
 import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+import shutil  # Import shutil for moving files
 
 # Global flag for stopping the monitoring thread
 stop_flag = threading.Event()
@@ -17,7 +18,7 @@ MONITORED_DIRECTORIES = [
     os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
     os.path.join(user, "AppData", "Local", "Temp"),
-    "C:\ProgramData",
+    "C:\\ProgramData",
 ]
 
 # List of processes to exclude from killing
@@ -25,10 +26,19 @@ EXCLUDED_PROCESSES = []
 
 # Set to keep track of monitored PIDs
 initial_pids = set()
+observers = []
+threads = []
+
+# Quarantine directory
+QUARANTINE_DIR = os.path.join(user, "AppData", "Local", "RansomPyShield", "Quarantine")
+os.makedirs(QUARANTINE_DIR, exist_ok=True)  # Create quarantine directory if it doesn't exist
 
 def stop_monitoring():
     stop_flag.set()
-
+    for observer in observers:
+        observer.stop()
+    for thread in threads:
+        thread.join()
 
 class YaraScanHandler(FileSystemEventHandler):
     def on_created(self, event):
@@ -47,23 +57,32 @@ class YaraScanHandler(FileSystemEventHandler):
             self.perform_scans(event.src_path)
 
     def perform_scans(self, file_path):
-        scan_functions = [signature, suspicious_technique, convention_engine, exploit_scan]
-
-        # If custom.yar exists, add it to the scan functions
-        custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "custom.yar")
-        if os.path.exists(custom_yara_path):
-            scan_functions.append(custom_rule_scan)
-            #print("Custom YARA rules detected. Including Custom.yar in scanning.") #debug print
+        scan_functions = [signature, suspicious_technique, exploit_scan]
 
         for scan_function in scan_functions:
             result = [False]
             thread = threading.Thread(target=scan_with_thread, args=(scan_function, file_path, result))
+            thread.daemon = True  # Make thread a daemon
             thread.start()
             thread.join()  # Wait for the scan to complete
             if result[0]:
-                print(f"Malicious file detected: {file_path}. Scan your system immediately.")
+                print(f"Malicious file detected: {file_path}. Quarantining the file.")
+                quarantine_file(file_path)  # Call the quarantine function
                 kill_all_new_processes()
                 break  # Stop further scans if any scan detects malicious activity
+
+def quarantine_file(file_path):
+    try:
+        # Get the original file extension and rename the file
+        base = os.path.splitext(file_path)
+        new_file_path = f"{base}.ransom"  # Add .ransom extension
+        os.rename(file_path, new_file_path)  # Rename the file
+
+        # Move the renamed file to the quarantine directory
+        shutil.move(new_file_path, QUARANTINE_DIR)  # Move to quarantine
+        print(f"File {new_file_path} moved to quarantine.")
+    except Exception as e:
+        print(f"Error quarantining file {file_path}: {e}")
 
 def load_yara_rules(yara_file_path):
     try:
@@ -99,11 +118,6 @@ def exploit_scan(file_path):
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
-def convention_engine(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "ConventionEngine.yar")
-    rules = load_yara_rules(yara_file_path)
-    return scan_file_with_yara(rules, file_path) if rules else False
-
 def suspicious_technique(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
     rules = load_yara_rules(yara_file_path)
@@ -114,13 +128,7 @@ def signature(file_path):
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
-def custom_rule_scan(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "custom.yar")
-    rules = load_yara_rules(yara_file_path)
-    return scan_file_with_yara(rules, file_path) if rules else False
-
 def is_excluded_process(process_name):
-    # Check if the process name should be excluded
     return process_name in EXCLUDED_PROCESSES
 
 def kill_process(pid):
@@ -133,33 +141,34 @@ def kill_process(pid):
         print(f"Failed to kill process {pid}: {e}")
 
 def kill_all_new_processes():
-    current_pids = set(proc.pid for proc in psutil.process_iter(['pid']))  # Current process snapshot
-    new_pids = current_pids - initial_pids  # Find processes that were created after snapshot
+    current_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
+    new_pids = current_pids - initial_pids
     for pid in new_pids:
         kill_process(pid)
 
 def monitor_directory(directory):
     global initial_pids
-    initial_pids = set(proc.pid for proc in psutil.process_iter(['pid']))  # Take a snapshot of current processes
+    initial_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
 
     event_handler = YaraScanHandler()
     observer = Observer()
     observer.schedule(event_handler, directory, recursive=False)
-
+    observers.append(observer)
     observer.start()
-    print(f"Monitoring started for {directory}...")
 
+    print(f"Monitoring started for {directory}...")
     try:
-        while not stop_flag.is_set():  # Keep the monitoring thread running
-            time.sleep(1)  # Prevent busy waiting
-    except KeyboardInterrupt:
+        while not stop_flag.is_set():
+            time.sleep(1)
+    finally:
         observer.stop()
-    observer.join()
+        observer.join()
 
 def start_monitoring():
     threads = []
     for directory in MONITORED_DIRECTORIES:
         thread = threading.Thread(target=monitor_directory, args=(directory,))
+        thread.daemon = True  # Make thread a daemon
         threads.append(thread)
         thread.start()
 

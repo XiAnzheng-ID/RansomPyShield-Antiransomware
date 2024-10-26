@@ -16,7 +16,7 @@ def get_rules(github_url, zip_filename, extract_to):
 
         # Delete zip after extract
         os.remove(zip_filename)
-
+        print("All Yara Rules has been updated successfully")
     else:
         print(f"Failed to update Yara Rules. Status code: {response.status_code}")
 
@@ -36,4 +36,4 @@ if __name__ == "__main__":
 
     # Download dan extract dari dua URL yang berbeda
     get_rules(rule, zip_rule, extract_to)
-    print("All Yara Rules has been updated successfully")
+    

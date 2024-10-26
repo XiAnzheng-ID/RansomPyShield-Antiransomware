@@ -13,7 +13,7 @@ import honeypot.foldermonitor as fm
 import yaramodule.getRules as gr
 import yaramodule.yarascan as ys
 import yaramodule.yarascanfile as ysf
-import blacklist.malwarebazaar as mb
+import blacklist.getHashes as gh
 import blacklist.blacklistscan as bs
 import blacklist.blacklistfile as bf
 import protectmodule.execwatcher as ew
@@ -34,6 +34,7 @@ is_blacklist_on = False
 
 blacklist_file_thread = None
 is_blacklist_file_on = False
+
 observers = None  # List of global Observer objects 
 
 is_behaviour_on = False
@@ -83,6 +84,7 @@ def run_honey_thread():
     hm.clean_and_copy_honey_files()
     time.sleep(2)  # Let the thread finish clean and copy Honeypot files
     protection_thread = threading.Thread(target=antiransomware)
+    protection_thread .daemon = True  # Make thread a daemon
     protection_thread.start()
 
 # Stop the Honey thread
@@ -99,6 +101,7 @@ def run_yara_scan_thread():
     global yara_thread
     print("Yara Scan ON")
     yara_thread = threading.Thread(target=ys.monitor_processes)
+    yara_thread.daemon = True  # Make thread a daemon
     yara_thread.start()
 
 # Stop YARA
@@ -114,7 +117,9 @@ def run_yara_file_thread():
     global yara_file_thread
     print("File Scan ON")
     yara_thread = threading.Thread(target=ys.monitor_processes)
-    yara_file_thread = threading.Thread(target=ysf.start_monitoring)
+    yara_file_thread = threading.Thread(target= ysf.start_monitoring)
+    yara_thread.daemon = True  # Make thread a daemon
+    yara_file_thread.daemon = True  # Make thread a daemon
     yara_thread.start()
     yara_file_thread.start()
 
@@ -182,7 +187,7 @@ def toggle_blacklist(blacklist_button):
         is_blacklist_on = True
 
 def start_hashes_update_thread():
-    update_hashes_thread = threading.Thread(target=mb.update_hashes_scheduler, args=(3600,), daemon=True)
+    update_hashes_thread = threading.Thread(target=gh.check_for_updates, args=(url,save_directory), daemon=True)
     update_hashes_thread.start()
 
 # behaviour monitoring toggle
@@ -199,11 +204,12 @@ def toggle_behaviour_monitoring(behaviour_button):
     else:
         # Start monitoring in a separate thread
         behaviour_thread = threading.Thread(target=behaviour.start_monitoring)
+        behaviour_thread.daemon = True  # Make thread a daemon
         behaviour_thread.start()
         behaviour_button.configure(text="Behaviour Monitoring[ON]", fg_color="green")
         is_behaviour_on = True
 
-# Toggle protection status (both Honeypot and Yara Scan)
+# Toggle protection status (both Honeypot and Yara scan)
 def toggle_protection(protection_button):
     global is_protection_on, is_yara_on, is_yara_file_on , protection_thread, yara_thread , yara_file_thread
     if is_protection_on and is_yara_on and is_yara_file_on:
@@ -230,17 +236,20 @@ def toggle_protection(protection_button):
         print("Yara Scan ON")
 
         # Bersihkan dan salin file ke folder "Honey"
-        hm.clean_and_copy_honey_files()
+        hm.clean_and_copy_honey_files ()
         time.sleep(2)  # Beri waktu untuk menyelesaikan salinan file Honeypot
 
         # Mulai Honeypot dan Yara Scan monitoring thread
         protection_thread = threading.Thread(target=antiransomware)
+        protection_thread.daemon = True  # Make thread a daemon
         protection_thread.start()
 
         yara_thread = threading.Thread(target=ys.monitor_processes)
+        yara_thread.daemon = True  # Make thread a daemon
         yara_thread.start()
 
         yara_file_thread = threading.Thread(target=ysf.start_monitoring)
+        yara_file_thread.daemon = True  # Make thread a daemon
         yara_file_thread.start()
 
 #execwatcher.py
@@ -354,7 +363,7 @@ def on_closing():
     if is_behaviour_on:
         behaviour.stop_monitoring()
         
-    app.destroy()
+    app.quit()  # Menggunakan quit daripada destroy untuk memastikan semua thread dihentikan
 
 def main_ui():
     global app
@@ -397,7 +406,7 @@ def main_ui():
 
     # Random Text
     text = '''
-    ©Devin Nathaniel(XiAnzheng)@2024
+    De Devin Nathaniel(XiAnzheng)@2024
     Universitas Gunadarma
     https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware
     '''
@@ -416,15 +425,17 @@ if __name__ == "__main__":
     zip_rule = "Rule.zip"
     extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
 
+    url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/hashes.txt"
+    save_directory = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
+
     try:
         print("Updating Hashes & Rules....")
         gr.get_rules(rule, zip_rule, extract_to)
-        mb.main()
-        print("Blacklist Hashes & Yara Rules Successfully updated")
-        update_thread = threading.Thread(target=update_rules_scheduler, daemon=True)
-        update_thread.start()
+        gh.download_file_from_github(url, save_directory)
         start_hashes_update_thread()
         main_ui()
-    except Exception:
-        print("Failed to update one of the protection component. Check your internet connection and re-open this app")
+    except Exception as e:
+        print(e)
+        print("Failed to update one or more protection component. Check your internet connection and re-open this app")
         input("Press anykey to exit")
+        

@@ -1,7 +1,6 @@
 # RansomPyShield - Antiransomware
 Whats this for? this is my pre-configure and driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff 
-That aim to detect and prevent a total lockdown during a Ransomware attack in case your EDR or Security Solution failed to detect a Zero day or targeted Attack 
-
+That aim to detect and prevent a total lockdown during a Zero day Ransomware attack where your EDR or Security Solution failed to detect it
 (Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
 
 ### ⚠️DISCLAIMER⚠️
@@ -14,7 +13,6 @@ That aim to detect and prevent a total lockdown during a Ransomware attack in ca
 * This app only Scan & Protect on a folder that Ransomware and other Malware mostly used to spread and infect
 
 (Compile your own version for added protection or again use other EDR/Security Solution)
-
 Report any False Positive and Missed Detection if you can , i really appriciate it
 
 ### Video Proof
@@ -41,6 +39,10 @@ Optional Feature : Panic Button incase some undetected Screenlocker managed to l
 3. Then fill the Folder with dummy file
 4. Turn on my Antiransomware Feature
 5. Let my app do the work
+
+Note:
+Dont forget to fill the Whitelist on yaramodule script else it will scan everything including system files
+or use my pre configure installer (check release section) , if you lazy to do it
 
 To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
 
