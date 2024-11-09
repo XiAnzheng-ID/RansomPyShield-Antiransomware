@@ -65,7 +65,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
 * Suspicious Exec/Command Filter (this will watch all cmd & PS call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
 * Folder Behaviour Activity
-* TrustGuard (Block all executable with High Entropy , Leaked Digital Signer(Yara Rule), Unsigned)
+* TrustGuard (Block all executable with High Entropy, Packed(Yara Rule), Leaked Digital Signer(Yara Rule), Unsigned)
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
