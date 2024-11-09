@@ -22,13 +22,13 @@ MONITOR_DIRECTORIES = [
     "C:\\ProgramData",
 ]
 
-# List of directories to exclude from scanning
+# Whitelist
+# Dont Forget to fill this as you need
 EXCLUDED_DIRECTORIES = [
 
 ]
 
 
-# List of processes to exclude from killing
 EXCLUDED_PROCESSES = [
     
 ]

@@ -81,13 +81,13 @@ class YaraScanHandler(FileSystemEventHandler):
 
 def quarantine_file(file_path):
     try:
-        # Get the original file extension and rename the file
-        base = os.path.splitext(file_path)
+        # Get the original file name and extension
+        base, ext = os.path.splitext(file_path)
         new_file_path = f"{base}.ransom"  # Add .ransom extension
         os.rename(file_path, new_file_path)  # Rename the file
 
         # Move the renamed file to the quarantine directory
-        shutil.move(new_file_path, QUARANTINE_DIR)  # Move to quarantine
+        shutil.move(new_file_path, os.path.join(QUARANTINE_DIR, os.path.basename(new_file_path)))  # Move to quarantine
         print(f"File {new_file_path} moved to quarantine.")
     except Exception as e:
         print(f"Error quarantining file {file_path}: {e}")
