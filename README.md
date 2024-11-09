@@ -31,7 +31,7 @@ In short : Blacklist > Yara > Behaviour > Honeypot (Lastline of defense)
 
 Execution Watcher will watch all CMD & PS and compare it with my Blacklisted keyword will try to kill those malicious call before it can execute the command
 
-Optional Feature : Panic Button incase some undetected Screenlocker managed to lock the screen
+Optional Feature : Panic Button incase some undetected Screenlocker managed to lock the screen & TrustGuard for Windows Hardening
 
 # How to Use?
 1. Download Sigcheck from <a href="https://learn.microsoft.com/id-id/sysinternals/downloads/sigcheck">Sysinternals</a>
