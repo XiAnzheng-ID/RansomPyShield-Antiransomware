@@ -17,6 +17,7 @@ import blacklist.getHashes as gh
 import blacklist.blacklistscan as bs
 import blacklist.blacklistfile as bf
 import protectmodule.execwatcher as ew
+import protectmodule.trustguard as tg
 from protectmodule import behaviour
 
 # Var
@@ -35,12 +36,14 @@ is_blacklist_on = False
 blacklist_file_thread = None
 is_blacklist_file_on = False
 
-observers = None  # List of global Observer objects 
-
-is_behaviour_on = False
 behaviour_thread = None
+is_behaviour_on = False
 
-app_version = "25.10.2024"
+trustguard_thread = None
+is_trustguard_on = False
+
+observers = None  # List of global Observer objects for monitoring
+app_version = "09.11.2024"
 
 # Other Folder
 appdata_path = os.getenv('LOCALAPPDATA')
@@ -70,11 +73,10 @@ def run_with_uac():
         print("Requesting Admin Access, you can close this window")
         elevate.elevate()
 
-# other script
+# Run Honey
 def antiransomware():
     fm.main()
 
-# Run Honey
 def run_honey_thread():
     global protection_thread
     ctypes.windll.kernel32.SetConsoleTitleW(f"RansomPyShield Log , {app_version} [Protection ON]")
@@ -129,7 +131,6 @@ def stop_yara_file_thread():
         ysf.stop_monitoring()
         yara_thread.join()
     print("File Scan OFF")
-
 
 # Update Yara rules periodically
 def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
@@ -262,6 +263,25 @@ def toggle_block_cmd(block_cmd_button):
         ew.start_monitoring()
         block_cmd_button.configure(text="Exec Watcher[ON]", fg_color="green")
 
+# behaviour monitoring toggle
+def toggle_trustguard(trustguard_button):
+    global is_trustguard_on, trustguard_thread
+
+    if is_trustguard_on:
+        # Stop monitoring
+        tg.stop_monitoring()  # Menghentikan pemantauan
+        if trustguard_thread:
+            trustguard_thread.join()  # Tunggu hingga thread monitoring selesai
+        trustguard_button.configure(text="TrustGuard [OFF]", fg_color="red")
+        is_trustguard_on = False
+    else:
+        # Start monitoring in a separate thread
+        trustguard_thread = threading.Thread(target=tg.start_monitoring)
+        trustguard_thread.daemon = True  # Make thread a daemon
+        trustguard_thread.start()
+        trustguard_button.configure(text="TrustGuard [ON]", fg_color="green")
+        is_trustguard_on = True
+
 # Open honeypot directory
 def open_honeypot_directory():
     if os.path.exists(honeyfiles_path):
@@ -371,8 +391,9 @@ def main_ui():
     ctk.set_default_color_theme("dark-blue") 
 
     app = ctk.CTk()  
-    app.geometry("450x350")
-    app.title("RansomPyShield")
+    app.geometry("420x350")
+    app.resizable(False, False)
+    app.title(f"RansomPyShield v{app_version}")
     app.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Button Section
@@ -393,8 +414,12 @@ def main_ui():
     block_cmd_button.grid(row=2, column=1, padx=20, pady=10)
 
     #Behaviour Monitoring
+    trustguard_button = ctk.CTkButton(master=app, text="TrustGuard[OFF]", command=lambda: toggle_trustguard(trustguard_button), fg_color="red")
+    trustguard_button.grid(row=3, column=1, padx=20, pady=10)
+
+    #Behaviour Monitoring
     behaviour_button = ctk.CTkButton(master=app, text="Behaviour Monitoring[OFF]", command=lambda: toggle_behaviour_monitoring(behaviour_button), fg_color="red")
-    behaviour_button.grid(row=3, column=1, padx=20, pady=10)
+    behaviour_button.grid(row=4, column=1, padx=20, pady=10)
 
     # Open RansomPyShield folder 
     open_dir_button = ctk.CTkButton(master=app, text="Folder Honeypot", command=open_honeypot_directory)
@@ -406,12 +431,12 @@ def main_ui():
 
     # Random Text
     text = '''
-    De Devin Nathaniel(XiAnzheng)@2024
+    Devin Nathaniel(XiAnzheng)@2024
     Universitas Gunadarma
     https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware
     '''
     label = ctk.CTkLabel(master=app, text=text, justify="left", anchor="w")
-    label.place(relx=0.5, rely=0.7, anchor=ctk.CENTER)
+    label.place(relx=0.5, rely=0.8, anchor=ctk.CENTER)
 
     app.mainloop()
 
@@ -438,4 +463,3 @@ if __name__ == "__main__":
         print(e)
         print("Failed to update one or more protection component. Check your internet connection and re-open this app")
         input("Press anykey to exit")
-        

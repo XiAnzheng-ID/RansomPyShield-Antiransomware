@@ -3,12 +3,24 @@ import os
 import psutil
 import time
 import threading
+import shutil
+from notifypy import Notify
 
 # Global flag for stopping the monitoring thread
 stop_flag = threading.Event()
 
 # Other variables
 user = os.path.expanduser("~")
+QUARANTINE_DIR = os.path.join(user, "AppData", "Local", "RansomPyShield", "Quarantine")
+
+# List of directories to quarantine
+MONITOR_DIRECTORIES = [
+    os.path.join(user, "Desktop"),
+    os.path.join(user, "Downloads"),
+    os.path.join(user, "AppData", "Local", "Temp"),
+    os.path.join(user, "AppData", "Roaming"),
+    "C:\\ProgramData",
+]
 
 # List of directories to exclude from scanning
 EXCLUDED_DIRECTORIES = [
@@ -23,6 +35,12 @@ EXCLUDED_PROCESSES = [
 
 def stop_monitoring():
     stop_flag.set()
+
+def warn(file_path):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Ransomware detected: {file_path} \n and has been quarantined"
+    notification.send()
 
 def load_yara_rules(yara_file_path):
     try:
@@ -53,6 +71,27 @@ def scan_with_thread(scan_function, file_path, result):
         print(f"Error in thread while running {scan_function.__name__}: {e}")
         result[0] = False
 
+def rename_and_quarantine(file_path):
+    try:
+        base, ext = os.path.splitext(file_path)
+        new_file_path = f"{base}{ext}.ransom"
+        shutil.move(file_path, new_file_path)
+        quarantine_path = os.path.join(QUARANTINE_DIR, os.path.basename(new_file_path))
+        shutil.move(new_file_path, quarantine_path)
+        print(f"File {file_path} renamed to {new_file_path} and moved to quarantine.")
+    except Exception as e:
+        print(f"Failed to quarantine file {file_path}: {e}")
+
+def ransompyshield(file_path):
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "RansomPyShield.yar")
+    rules = load_yara_rules(yara_file_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        # Check if the file is in one of the monitored directories
+        if any(file_path.startswith(dir) for dir in MONITOR_DIRECTORIES):
+            rename_and_quarantine(file_path)
+            return True 
+    return scan_file_with_yara(rules, file_path) if rules else False
+
 def exploit_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Exploit.yar")
     rules = load_yara_rules(yara_file_path)
@@ -71,7 +110,13 @@ def suspicious_technique(file_path):
 def signature(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
     rules = load_yara_rules(yara_file_path)
-    return scan_file_with_yara(rules, file_path) if rules else False
+    
+    if rules and scan_file_with_yara(rules, file_path):
+        # Check if the file is in one of the monitored directories
+        if any(file_path.startswith(dir) for dir in MONITOR_DIRECTORIES):
+            rename_and_quarantine(file_path)
+            return True 
+    return False
 
 def custom_rule_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "custom.yar")
@@ -109,7 +154,7 @@ def kill_process(pid):
         print(f"Failed to kill process {pid}: {e}")
 
 def perform_scans(file_path, pid):
-    scan_functions = [signature, suspicious_technique, convention_engine, exploit_scan]
+    scan_functions = [signature, ransompyshield, suspicious_technique, convention_engine, exploit_scan,]
     
     # If custom.yar exists, add it to the scan functions
     custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
@@ -123,8 +168,9 @@ def perform_scans(file_path, pid):
         thread.start()
         thread.join()  # Wait for the scan to complete
         if result[0]:
-            print(f"Malicious activity detected in {file_path}. Killing process {pid}.")
             kill_process(pid)
+            warn(file_path)
+            print(f"Malicious activity detected in {file_path}. Killing process {pid}.")
             return  # Stop further scans if any scan detects malicious activity
 
 def monitor_processes():
@@ -183,4 +229,5 @@ def monitor_processes():
         time.sleep(0.1)
 
 if __name__ == "__main__":
+    os.makedirs(QUARANTINE_DIR, exist_ok=True)
     monitor_processes()

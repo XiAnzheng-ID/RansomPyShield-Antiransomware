@@ -1,6 +1,7 @@
 import psutil
 import time
 import threading
+from notifypy import Notify
 
 # Daftar command yang diblokir
 blacklist_commands = [
@@ -11,7 +12,7 @@ blacklist_commands = [
     "cipher",  # Possible encryption command
     # Change Windows Defender, Firewall, Task Manager, Regedit settings
     "set-mppreference", "mppreference", "disabletaskMgr", "disableregedit", "disableregistrytools",
-    "firewallpolicy", "enablefirewall", "firewalldisablenotify", "netsh", "advfirewall",
+    "firewallpolicy", "enablefirewall", "firewalldisablenotify", "advfirewall",
     # file-enumeration
     "get-childItem", "childItem",
     # Encoded powershell command
@@ -39,6 +40,12 @@ blacklist_commands = [
 process_list = ['vssadmin.exe', 'WMIC.exe'] #make sure vssadmin.exe and wmic.exe are killed
 is_monitoring = False
 process_threads = {}  # Dictionary to store running threads for each process
+
+def warn(cmdline):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Execution Watcher have prevented a suspicious command:\n {cmdline} \n from executing"
+    notification.send()
 
 def start_monitoring():
     global is_monitoring
@@ -80,7 +87,6 @@ def resume_process(pid):
         print(f"Process with PID {pid} no longer exists.")
 
 def monitor_process(pid, name, cmdline):
-    """ Monitor specific process in a separate thread """
     try:
         # Try to pause that process
         pause_process(pid)
@@ -90,11 +96,13 @@ def monitor_process(pid, name, cmdline):
         if name == "powershell.exe" and any(flag in cmdline for flag in ['-e', '-en', '-enc', '-enco', '-encodedcommand']):
             psutil.Process(pid).kill()
             kill_vssadmin_and_wmic(process_list)
+            warn(cmdline)
             print(f"Encoded PowerShell command detected: {cmdline}")
             print(f"Process with PID {pid} terminated due to encoded command.")
         elif any(bad_cmd in cmdline for bad_cmd in blacklist_commands):
             psutil.Process(pid).kill()
             kill_vssadmin_and_wmic(process_list)
+            warn(cmdline)
             print(f"Suspicious command detected: {cmdline}")
             print(f"Process with PID {pid} terminated due to suspicious command.")
         else:

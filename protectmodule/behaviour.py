@@ -1,9 +1,12 @@
 import psutil
 import time
 import os
+import threading
+import winsound
+import ctypes
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import threading
+
 
 # Variable and counter
 folder_counters = {}
@@ -34,6 +37,10 @@ directories_to_monitor = [
     "C:\ProgramData",
 ]
 
+def show_message_box():
+    winsound.MessageBeep(winsound.MB_ICONASTERISK)  # Notification sound
+    ctypes.windll.user32.MessageBoxW(0, "RANSOMWARE ACTIVITY DETECTED, PLEASE SCAN YOUR SYSTEM", "Ransomware Detected", 0x30 | 0x1000)  # MSGBOX
+    
 class FolderMonitorHandler(FileSystemEventHandler):
     def __init__(self, folder):
         self.folder = folder  # save path folder
@@ -97,8 +104,9 @@ def monitor_folders(directories):
             for folder, counters in folder_counters.items():
                 #change this as you need (the lower the number the aggresive this script will act)
                 if counters['delete_count'] >= 6 and counters['new_file_count'] >= 3 :
-                    print(f"Suspicious activity detected in {folder}!")
                     kill_new_processes()
+                    show_message_box()
+                    print(f"Suspicious activity detected in {folder}!")
     except KeyboardInterrupt:
         stop_monitoring()
     for observer in observers:

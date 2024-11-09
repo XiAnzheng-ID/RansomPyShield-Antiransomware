@@ -4,8 +4,15 @@ import psutil
 import shutil
 import threading
 import time
+from notifypy import Notify
 
 stop_event = threading.Event()
+
+def warn(executable_path):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Ransomware file: {executable_path} detected \n and has been quarantined"
+    notification.send()
 
 def start_monitoring_thread(hash_file):
     global stop_event
@@ -97,6 +104,7 @@ def monitor_hashes(hash_file):
                         if os.path.exists(executable_path):
                             file_hash = calculate_sha256(executable_path)
                             if file_hash in hashes:
+                                warn(executable_path)
                                 print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
                                 proc.kill()  # Terminate the process
                                 print(f"Process {proc.info['pid']} terminated")

@@ -3,6 +3,7 @@ import os
 import shutil
 import threading
 import time
+from notifypy import Notify
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -16,7 +17,8 @@ MONITORED_DIRECTORIES = [
     os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
     os.path.join(user, "AppData", "Local", "Temp"),
-    "C:\ProgramData",
+    os.path.join(user, "AppData", "Roaming"),
+    "C:\\ProgramData",
 ]
 
 # Quarantine directory path
@@ -24,6 +26,12 @@ QUARANTINE_DIR = os.path.join(user, "AppData", "Local", "RansomPyShield", "Quara
 
 # Create Quarantine directory if it doesn't exist
 os.makedirs(QUARANTINE_DIR, exist_ok=True)
+
+def warn(file_path):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Ransomware file: {file_path} detected \n and has been quarantined"
+    notification.send()
 
 def start_monitoring_threads(hash_file):
     global stop_event
@@ -82,21 +90,19 @@ class MonitorHandler(FileSystemEventHandler):
             if os.path.exists(file_path):
                 file_hash = calculate_sha256(file_path)
                 if file_hash in self.hashes:
-                    print(f"Hash match found for file {file_path}")
                     self.quarantine_file(file_path)
-
+                    warn(file_path)
+                    print(f"Hash match found for file {file_path}")
         except Exception as e:
             print(f"Error processing file {file_path}: {e}")
 
     def quarantine_file(self, file_path):
-        #Rename and move file to quarantine directory
         try:
-            # Generate the new file name with .ransom extension
+            # Rename and move file to quarantine directory
             file_name = os.path.basename(file_path)
             new_file_name = f"{file_name}.ransom"
             destination = os.path.join(QUARANTINE_DIR, new_file_name)
 
-            # Move the file to the quarantine directory
             shutil.move(file_path, destination)
             print(f"File {file_path} quarantined as {destination}")
 
@@ -105,22 +111,18 @@ class MonitorHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if not event.is_directory:
-            #print(f"File created: {event.src_path}")  # Debug print
             self.process_event(event.src_path)
 
     def on_modified(self, event):
         if not event.is_directory:
-            #print(f"File modified: {event.src_path}")  # Debug print
             self.process_event(event.src_path)
 
     def on_moved(self, event):
         if not event.is_directory:
-            #print(f"File moved: {event.src_path}")  # Debug print
             self.process_event(event.dest_path)
 
     def on_deleted(self, event):
         if not event.is_directory:
-            #print(f"File deleted: {event.src_path}")  # Debug print
             self.process_event(event.src_path)
 
 

@@ -3,9 +3,10 @@ import os
 import psutil
 import time
 import threading
+import shutil  
+from notifypy import Notify
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import shutil  # Import shutil for moving files
 
 # Global flag for stopping the monitoring thread
 stop_flag = threading.Event()
@@ -18,6 +19,7 @@ MONITORED_DIRECTORIES = [
     os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
     os.path.join(user, "AppData", "Local", "Temp"),
+    os.path.join(user, "AppData", "Roaming"),
     "C:\\ProgramData",
 ]
 
@@ -32,6 +34,12 @@ threads = []
 # Quarantine directory
 QUARANTINE_DIR = os.path.join(user, "AppData", "Local", "RansomPyShield", "Quarantine")
 os.makedirs(QUARANTINE_DIR, exist_ok=True)  # Create quarantine directory if it doesn't exist
+
+def warn(file_path):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Ransomware detected: {file_path} \n and has been quarantined"
+    notification.send()
 
 def stop_monitoring():
     stop_flag.set()
@@ -57,7 +65,7 @@ class YaraScanHandler(FileSystemEventHandler):
             self.perform_scans(event.src_path)
 
     def perform_scans(self, file_path):
-        scan_functions = [signature, suspicious_technique, exploit_scan]
+        scan_functions = [signature, ransompyshield, suspicious_technique, exploit_scan]
 
         for scan_function in scan_functions:
             result = [False]
@@ -66,7 +74,7 @@ class YaraScanHandler(FileSystemEventHandler):
             thread.start()
             thread.join()  # Wait for the scan to complete
             if result[0]:
-                print(f"Malicious file detected: {file_path}. Quarantining the file.")
+                warn(file_path)
                 quarantine_file(file_path)  # Call the quarantine function
                 kill_all_new_processes()
                 break  # Stop further scans if any scan detects malicious activity
@@ -125,6 +133,11 @@ def suspicious_technique(file_path):
 
 def signature(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
+    rules = load_yara_rules(yara_file_path)
+    return scan_file_with_yara(rules, file_path) if rules else False
+
+def ransompyshield(file_path):
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "RansomPyShield.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 

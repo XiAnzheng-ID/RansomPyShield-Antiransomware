@@ -34,11 +34,12 @@ Execution Watcher will watch all CMD & PS and compare it with my Blacklisted key
 Optional Feature : Panic Button incase some undetected Screenlocker managed to lock the screen
 
 # How to Use?
-1. Run my App/Script , dont turn on the feature yet
-2. Press "Open Honeypot Folder"
-3. Then fill the Folder with dummy file
-4. Turn on my Antiransomware Feature
-5. Let my app do the work
+1. Download Sigcheck from <a href="https://learn.microsoft.com/id-id/sysinternals/downloads/sigcheck">Sysinternals</a>
+2. Run my App/Script , dont turn on the feature yet
+3. Press "Open Honeypot Folder"
+4. Then fill the Folder with dummy file
+5. Turn on my Antiransomware Feature
+6. Let my app do the work
 
 Note:
 Dont forget to fill the Whitelist on yaramodule script else it will scan everything including system files
@@ -64,6 +65,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
 * Suspicious Exec/Command Filter (this will watch all cmd & PS call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
 * Folder Behaviour Activity
+* TrustGuard (Block all executable with High Entropy , Leaked Digital Signer(Yara Rule), Unsigned)
 
 ### Known Weakness and Bug:
 * there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
@@ -76,6 +78,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
 * Whitelist still hardcoded on code (i will try to find a work-around)
+* You need Sigcheck from sysinternals for the TrustGuard else it will crash
 
 # To Be Added (Ideas)
 * Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
@@ -87,12 +90,14 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Rename the folder name of my honeypot folder in the my code
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
-python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
+python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable  RansomPyShield.py
 ```
 or 
 ```bash
-python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output RansomPyShield.py
+python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable  RansomPyShield.py
 ```
+if you still need console for debugging or other stuff just remove the --windows-console-mode=disable argument
+
 after that put it somewhere else like Program Files or Appdata or wherever you want \
 try to put in a place where ransomware will not or rarely target 
 
