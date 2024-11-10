@@ -29,7 +29,13 @@ def scan_file_with_yara(rules, file_path):
         print(f"No YARA match found in {file_path}.")
         return False
 
-# Rules
+# Load YARA rules
+def load_yara_rules(rule_files):
+    rule_sources = {f"rule_{i}": open(file).read() for i, file in enumerate(rule_files)}
+    rules = yara.compile(sources=rule_sources)
+    return rules
+
+# Define YARA scan functions
 def packed(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Packed.yar")
     rules = load_yara_rules([yara_file_path])
@@ -40,9 +46,10 @@ def cert(file_path):
     rules = load_yara_rules([yara_file_path])
     return scan_file_with_yara(rules, file_path) if rules else False
 
+# Show message box for alerts
 def show_message_box():
     winsound.MessageBeep(winsound.MB_ICONASTERISK)  # Notification sound
-    ctypes.windll.user32.MessageBoxW(0, "TrustGuard", "RansomPyShield have blocked this app from running due to security reason", 0x30 | 0x1000)  # MSGBOX
+    ctypes.windll.user32.MessageBoxW(0, "RansomPyShield has blocked this app from running due to security reasons", "TrustGuard", 0x30 | 0x1000)  # MSGBOX
 
 # Analyze process signature and perform checks
 def analyze_process_signature(process, max_entropy=7.5):
@@ -57,7 +64,8 @@ def analyze_process_signature(process, max_entropy=7.5):
         elif "Unsigned" in output:
             show_message_box()
             process.kill()
-            print(f"Process {process.pid} ({process.name()}): Not signed.")
+            print(f"Killed process {process.pid} ({process.name()}): Not signed.")
+            return
     else:
         print(f"Process {process.pid} ({process.name()}): Signature status unknown or error.")
 
@@ -68,19 +76,18 @@ def analyze_process_signature(process, max_entropy=7.5):
 
         # Entropy Scan
         if entropy > max_entropy:
-            process.kill()
             show_message_box()
-            print(f"Killing process {process.pid} ({process.name()}) due to high entropy: {entropy:.2f}")
-            return 
+            process.kill()
+            print(f"Killed process {process.pid} ({process.name()}) due to high entropy: {entropy:.2f}")
+            return
     except Exception as e:
         print(f"Could not calculate entropy: {e}")
 
     # YARA scans 
     if packed(file_path) or cert(file_path):
-        process.kill()
         show_message_box()
-        print(f"Killing process {process.pid} ({process.name()}) due to YARA match.")
-
+        process.kill()
+        print(f"Killed process {process.pid} ({process.name()}) due to YARA match.")
 
 # Monitor for new processes
 def monitor_new_processes(stop_event):
@@ -102,20 +109,14 @@ def monitor_new_processes(stop_event):
         # Update the existing process list
         existing_pids = current_pids
 
-# Load YARA rules
-def load_yara_rules(rule_files):
-    rule_sources = {f"rule_{i}": open(file).read() for i, file in enumerate(rule_files)}
-    rules = yara.compile(sources=rule_sources)
-    return rules
-
-#other var
+# Other variables
 scan_functions = [packed, cert]
 stop_event = threading.Event()
 
 def start_monitoring():
     global monitoring_thread
     stop_event.clear()
-    monitoring_thread = threading.Thread(target=monitor_new_processes, args=(stop_event,))
+    monitoring_thread = threading.Thread(target= monitor_new_processes, args=(stop_event,))
     monitoring_thread.daemon = True 
     monitoring_thread.start()
 
@@ -124,4 +125,5 @@ def stop_monitoring():
     
 if __name__ == "__main__":
     start_monitoring()
+    # Uncomment the line below to stop monitoring when needed
     # stop_monitoring()
