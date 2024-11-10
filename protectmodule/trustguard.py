@@ -10,7 +10,12 @@ import threading
 
 # Sigcheck
 def check_signature(file_path):
-    result = subprocess.run(['sigcheck.exe', file_path], capture_output=True, text=True)
+    result = subprocess.run(
+        ['sigcheck.exe', "-nobanner", "-accepteula", file_path], 
+        capture_output=True, 
+        text=True, 
+        creationflags=subprocess.CREATE_NO_WINDOW
+    )
     return result.stdout
 
 # Entropy 
@@ -62,9 +67,9 @@ def analyze_process_signature(process, max_entropy=7.5):
         if "Signed" in output:
             print(f"Process {process.pid} ({process.name()}): Signed by a trusted publisher.")
         elif "Unsigned" in output:
-            show_message_box()
             process.kill()
             print(f"Killed process {process.pid} ({process.name()}): Not signed.")
+            show_message_box()
             return
     else:
         print(f"Process {process.pid} ({process.name()}): Signature status unknown or error.")
