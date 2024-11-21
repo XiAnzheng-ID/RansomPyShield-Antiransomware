@@ -74,8 +74,8 @@ class YaraScanHandler(FileSystemEventHandler):
             thread.start()
             thread.join()  # Wait for the scan to complete
             if result[0]:
-                warn(file_path)
-                quarantine_file(file_path)  # Call the quarantine function
+                quarantine_file(file_path)
+                warn(file_path)  # Call the quarantine function
                 kill_all_new_processes()
                 break  # Stop further scans if any scan detects malicious activity
 
@@ -172,7 +172,7 @@ def monitor_directory(directory):
     print(f"Monitoring started for {directory}...")
     try:
         while not stop_flag.is_set():
-            time.sleep(1)
+            time.sleep(0.1)
     finally:
         observer.stop()
         observer.join()

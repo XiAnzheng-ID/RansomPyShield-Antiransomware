@@ -25,7 +25,7 @@ MONITOR_DIRECTORIES = [
 # Whitelist
 # Dont Forget to fill this as you need
 EXCLUDED_DIRECTORIES = [
-
+    
 ]
 
 
@@ -40,6 +40,12 @@ def warn(file_path):
     notification = Notify()
     notification.title = "RansomPyShield"
     notification.message = f"Ransomware detected: {file_path} \n and has been quarantined"
+    notification.send()
+
+def sus_warn(file_path):
+    notification = Notify()
+    notification.title = "RansomPyShield"
+    notification.message = f"Suspicious File detected: {file_path} \n and has been blocked"
     notification.send()
 
 def load_yara_rules(yara_file_path):
@@ -89,22 +95,33 @@ def ransompyshield(file_path):
         # Check if the file is in one of the monitored directories
         if any(file_path.startswith(dir) for dir in MONITOR_DIRECTORIES):
             rename_and_quarantine(file_path)
+            warn(file_path)
             return True 
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def exploit_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Exploit.yar")
     rules = load_yara_rules(yara_file_path)
+    # Warn
+    if rules and scan_file_with_yara(rules, file_path):
+        sus_warn(file_path)
+        return True 
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def convention_engine(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "ConventionEngine.yar")
     rules = load_yara_rules(yara_file_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        sus_warn(file_path)
+        return True 
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def suspicious_technique(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
     rules = load_yara_rules(yara_file_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        sus_warn(file_path)
+        return True 
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def signature(file_path):
@@ -115,12 +132,18 @@ def signature(file_path):
         # Check if the file is in one of the monitored directories
         if any(file_path.startswith(dir) for dir in MONITOR_DIRECTORIES):
             rename_and_quarantine(file_path)
+            warn(file_path)
             return True 
     return False
 
 def custom_rule_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "custom.yar")
     rules = load_yara_rules(yara_file_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        notification = Notify()
+        notification.title = "RansomPyShield"
+        notification.message = f"File match with custom Ruleset: {file_path} \n and has been blocked"
+        notification.send()
     return scan_file_with_yara(rules, file_path) if rules else False
 
 # Function to detect changes in YARA file and reload rules
@@ -154,7 +177,7 @@ def kill_process(pid):
         print(f"Failed to kill process {pid}: {e}")
 
 def perform_scans(file_path, pid):
-    scan_functions = [signature, ransompyshield, suspicious_technique, convention_engine, exploit_scan,]
+    scan_functions = [signature, ransompyshield, suspicious_technique, convention_engine, exploit_scan]
     
     # If custom.yar exists, add it to the scan functions
     custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
@@ -169,7 +192,6 @@ def perform_scans(file_path, pid):
         thread.join()  # Wait for the scan to complete
         if result[0]:
             kill_process(pid)
-            warn(file_path)
             print(f"Malicious activity detected in {file_path}. Killing process {pid}.")
             return  # Stop further scans if any scan detects malicious activity
 
