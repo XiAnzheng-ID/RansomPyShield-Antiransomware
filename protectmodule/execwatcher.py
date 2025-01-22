@@ -16,7 +16,7 @@ blacklist_commands = [
     # file-enumeration
     "get-childItem", "childItem",
     # Encoded powershell command
-    "-en", "-enco", "-encodedcommand", "en", "enc", "enco", "encodedcommand", "encoding",
+    "-enco", "-encodedcommand", "encodedcommand", "encoded",
     # Possible vssadmin usage
     "vssadmin.exe delete shadows /all", "delete shadows /all", "delete shadows",
     # Possible wmic usage
