@@ -81,7 +81,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * You need Sigcheck from sysinternals for the TrustGuard else it will crash
 
 # To Be Added (Ideas)
-* Machine-Learning (this might take a long time because i need to learn about ML and create a custom Dataset)
+* Machine-Learning (In Progress) (<a href="https://github.com/XiAnzheng-ID/RansomPyShield-Model">RansomPyShield-Model</a>)
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism
