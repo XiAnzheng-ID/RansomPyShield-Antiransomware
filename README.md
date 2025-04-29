@@ -90,11 +90,15 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Rename the folder name of my honeypot folder in the my code
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
-python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable  RansomPyShield.py
+python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
 ```
 or 
 ```bash
-python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable  RansomPyShield.py
+python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
+```
+or 
+```bash
+python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
 ```
 if you still need console for debugging or other stuff just remove the --windows-console-mode=disable argument
 
