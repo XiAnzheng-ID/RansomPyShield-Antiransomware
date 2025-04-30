@@ -5,10 +5,21 @@ import psutil
 
 folder_name = "Honey"
 file_name = "Honey.txt"
+folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
+honeyfiles_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Honey")
+
+def get_all_drives():
+    drives = [drive.device.split()[0] for drive in psutil.disk_partitions()]
+    return drives
+
+def is_hidden(path):
+    try:
+        attributes = os.stat(path).st_file_attributes
+        return attributes & 2 != 0  
+    except FileNotFoundError:
+        return False 
 
 def create_files_folders():
-    
-    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
     for folder in folders:
         path = os.path.join(os.path.expanduser("~"), folder)
         if not os.path.exists(path):
@@ -55,39 +66,7 @@ def create_files_folders():
             # Hide Honey.txt on drive
             if not is_hidden(honey_txt_path_drive):
                 ctypes.windll.kernel32.SetFileAttributesW(honey_txt_path_drive, 2)
-
-def get_all_drives():
-    drives = [drive.device.split()[0] for drive in psutil.disk_partitions()]
-    return drives
-
-def is_hidden(path):
-    try:
-        attributes = os.stat(path).st_file_attributes
-        return attributes & 2 != 0  
-    except FileNotFoundError:
-        return False  
-
-def clean_and_copy_honey_files():
-    folders = ["Desktop", "Downloads", "Documents", "Pictures", "Videos", "Music", "C:\\Users", os.path.expanduser('~')]
-    honeyfiles_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Honey")
-
-    if not os.path.exists(honeyfiles_path):
-        print(f"Path {honeyfiles_path} does not exist.")
-        os.system("exit")
-        return
-
-    for folder in folders:
-        honey_folder_path = os.path.join(os.path.expanduser("~"), folder, folder_name)
-        if os.path.exists(honey_folder_path):
-            clean_and_copy(honey_folder_path, honeyfiles_path)
-
-    # Honey folder on all drives
-    for drive in get_all_drives():
-        if os.access(drive, os.W_OK):  # Check if drive is writable
-            honey_folder_path_drive = os.path.join(drive, folder_name)
-            if os.path.exists(honey_folder_path_drive):
-                clean_and_copy(honey_folder_path_drive, honeyfiles_path)
-
+    
 def clean_and_copy(destination, source):
     # Hapus semua isi folder Honey
     for filename in os.listdir(destination):
@@ -111,3 +90,28 @@ def clean_and_copy(destination, source):
                 shutil.copy(src_file, dest_file)
         except Exception as e:
             print(f'Failed to copy {src_file} to {dest_file}. Reason: {e}')
+
+def clean_and_copy_honey_files():
+    if not os.path.exists(honeyfiles_path):
+        print(f"Path {honeyfiles_path} does not exist.")
+        os.system("exit")
+        return
+
+    for folder in folders:
+        honey_folder_path = os.path.join(os.path.expanduser("~"), folder, folder_name)
+        if os.path.exists(honey_folder_path):
+            clean_and_copy(honey_folder_path, honeyfiles_path)
+
+    # Honey folder on all drives
+    for drive in get_all_drives():
+        if os.access(drive, os.W_OK):  # Check if drive is writable
+            honey_folder_path_drive = os.path.join(drive, folder_name)
+            if os.path.exists(honey_folder_path_drive):
+                clean_and_copy(honey_folder_path_drive, honeyfiles_path)
+
+def main():
+    create_files_folders()
+    clean_and_copy_honey_files()
+
+if __name__ == "__main__":
+    main()

@@ -6,25 +6,14 @@ import threading
 import time
 from notifypy import Notify
 
-stop_event = threading.Event()
+monitor_thread = None
+monitor_running = False
 
 def warn(executable_path):
     notification = Notify()
     notification.title = "RansomPyShield"
     notification.message = f"Ransomware file: {executable_path} detected \n and has been quarantined"
     notification.send()
-
-def start_monitoring_thread(hash_file):
-    global stop_event
-    stop_event.clear()  # Reset stop event
-    thread = threading.Thread(target=monitor_hashes, args=(hash_file,))
-    thread.daemon = True  # Daemon thread will exit when the main program exits
-    thread.start()
-    return thread
-
-def stop_monitoring():
-    global stop_event
-    stop_event.set()  # Set stop event to stop monitoring
 
 def read_hashes_from_file(file_path):
     hashes = set()
@@ -77,56 +66,54 @@ def rename_and_move_file(file_path):
     except Exception as e:
         print(f"Error renaming and moving file {file_path}: {e}")
 
-def monitor_hashes(hash_file):
-    hashes = read_hashes_from_file(hash_file)
-    known_processes = get_current_processes()  # Set initial whitelist of running processes
-    last_mod_time = os.path.getmtime(hash_file)  # Get initial modification time
+def monitor_loop(hash_file):
+    global monitor_running
+    known_processes = get_current_processes()
 
-    while not stop_event.is_set():
+    while monitor_running:
         try:
-            # Check if the hash file has been modified
-            current_mod_time = os.path.getmtime(hash_file)
-            if current_mod_time != last_mod_time:
-                print(f"Hash file {hash_file} updated. Reloading hashes.")
-                hashes = read_hashes_from_file(hash_file)  # Reload hashes
-                last_mod_time = current_mod_time  # Update modification time
+            hashes = read_hashes_from_file(hash_file)
 
             for proc in psutil.process_iter(['pid', 'name', 'exe']):
                 try:
-                    # Skip the System Idle Process with PID 0
-                    if proc.info['pid'] == 0:
+                    if proc.info['pid'] == 0 or proc.info['pid'] in known_processes:
                         continue
 
-                    # Only scan newly detected processes (not in the initial whitelist)
-                    if proc.info['pid'] not in known_processes:
-                        known_processes.add(proc.info['pid'])  # Add new process to known list
-                        executable_path = proc.info['exe']
-                        if os.path.exists(executable_path):
-                            file_hash = calculate_sha256(executable_path)
-                            if file_hash in hashes:
-                                warn(executable_path)
-                                print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
-                                proc.kill()  # Terminate the process
-                                print(f"Process {proc.info['pid']} terminated")
+                    known_processes.add(proc.info['pid'])
+                    executable_path = proc.info['exe']
+                    if os.path.exists(executable_path):
+                        file_hash = calculate_sha256(executable_path)
+                        if file_hash in hashes:
+                            warn(executable_path)
+                            print(f"Hash match found for process {proc.info['pid']} - {proc.info['name']}")
+                            proc.kill()
+                            print(f"Process {proc.info['pid']} terminated")
+                            rename_and_move_file(executable_path)
 
-                                # Rename and move the file after killing the process
-                                rename_and_move_file(executable_path)
-
-                except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
-                    print(f"Error accessing process: {e}")
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
                 except Exception as e:
                     print(f"Unexpected error: {e}")
+
             time.sleep(0.1)
 
-        except FileNotFoundError:
-            print(f"{hash_file} , path cant be found")
         except Exception as e:
-            print(f"Unexpected error in monitoring: {e}")
+            print(f"Error in monitor loop: {e}")
             break
 
-    print("Blacklist monitoring stopped.")
+    print("[+] Hash monitoring thread stopped.")
 
-if __name__ == "__main__":
-    file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Hashes.txt")
-    start_monitoring_thread(file_path)
+def start_hash_monitor():
+    global monitor_running, monitor_thread
+    if not monitor_running:
+        monitor_running = True
+        hash_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "hashes.txt")
+        monitor_thread = threading.Thread(target=monitor_loop, args=(hash_file_path,), daemon=True)
+        monitor_thread.start()
+        print("[+] Hash monitoring started.")
+
+def stop_hash_monitor():
+    global monitor_running
+    if monitor_running:
+        monitor_running = False
+        print("[*] Stopping hash monitoring...")

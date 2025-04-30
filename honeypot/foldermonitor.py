@@ -8,19 +8,13 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Global flag to control monitoring and notifications
-stop_flag = threading.Event()
-observers = []
+observer = None
+monitor_thread = None
+monitor_running = False
 notification_lock = threading.Lock()  # Lock for controlling notification
 folder_name = "Honey"
 cooldown_flag = False  # Flag to control cooldown period for notifications
 cooldown_duration = 5  # Cooldown duration in seconds
-
-def stop_monitoring():
-    stop_flag.set()
-    for observer in observers:
-        observer.stop()
-        observer.join()
-    observers.clear()
 
 # Display MessageBox 
 def show_message_box():
@@ -102,61 +96,77 @@ def get_running_processes():
             pass
     return processes
 
-def monitor_directory(directory):
-    event_handler = MyHandler()
-    observer = Observer()
-    observer.schedule(event_handler, directory, recursive=True)
-    observers.append(observer)
-    observer.start()
-    try:
-        while not stop_flag.is_set():
-            time.sleep(0.1)  # Speed of activity monitoring
-    except KeyboardInterrupt:
+def start_honeypot_monitor():
+    global observer, monitor_thread, monitor_running
+
+    if monitor_running:
+        print("Honeypot monitor already running.")
+        return
+
+    def run_monitor():
+        global observer
+        event_handler = MyHandler()
+        observer = Observer()
+
+        user = os.path.expanduser("~")
+        folder_name = "Honey"
+
+        watch_dirs = []
+        for drive in psutil.disk_partitions():
+            try:
+                drive_letter = drive.device.split()[0]
+                honey_drive_path = os.path.join(drive_letter, folder_name)
+                if os.access(honey_drive_path, os.W_OK):
+                    watch_dirs.append(honey_drive_path)
+            except Exception:
+                continue
+
+        additional_dirs = [
+            "C:\\Users",
+            os.path.join(user, "Documents"),
+            os.path.join(user, "Desktop"),
+            os.path.join(user, "Videos"),
+            os.path.join(user, "Downloads"),
+            os.path.join(user, "Music"),
+            os.path.join(user, "Pictures"),
+        ]
+        watch_dirs.extend(additional_dirs)
+
+        for directory in watch_dirs:
+            if os.path.exists(directory):
+                try:
+                    observer.schedule(event_handler, path=directory, recursive=True)
+                except Exception as e:
+                    print(f"Could not schedule directory {directory}: {e}")
+
+        observer.start()
+        print("Honeypot monitor started.")
+        try:
+            while monitor_running:
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            pass
+
         observer.stop()
-    observer.stop()
-    observer.join()
+        observer.join()
+        observer = None
 
-def main():
-    global stop_flag
-    stop_flag.clear()
-    # User directory
-    user = os.path.expanduser("~")
-    documents = os.path.join(user, "Documents")
-    desktop = os.path.join(user, "Desktop")
-    video = os.path.join(user, "Videos")
-    download = os.path.join(user, "Downloads")
-    music = os.path.join(user, "Music")
-    picture = os.path.join(user, "Pictures")
+    monitor_running = True
+    monitor_thread = threading.Thread(target=run_monitor, daemon=True)
+    monitor_thread.start()
 
-    # Drive path
-    drives = psutil.disk_partitions()
-    directories_to_watch = []
-    for drive in drives:
-        drive_letter = drive.device.split()[0]
-        honey_drive_path = os.path.join(drive_letter, folder_name)
-        if os.access(honey_drive_path, os.W_OK):  # Check if drive is writable
-            directories_to_watch.append(honey_drive_path)
+def stop_honeypot_monitor():
+    global monitor_running, monitor_thread
 
-    directories_to_watch.extend([
-        "C:\\Users",
-        user,
-        documents,
-        desktop,
-        video,
-        download,
-        music,
-        picture,
-        user,
-    ])
-    
-    threads = []
-    for directory in directories_to_watch:
-        thread = threading.Thread(target=monitor_directory, args=(directory,))
-        thread.start()
-        threads.append(thread)
+    if not monitor_running:
+        print("Honeypot monitor is not running.")
+        return
 
-    for thread in threads:
-        thread.join()
+    monitor_running = False
 
-if __name__ == "__main__":
-    main()
+    # Tunggu sampai thread selesai
+    if monitor_thread and monitor_thread.is_alive():
+        monitor_thread.join()
+        monitor_thread = None
+
+    print("Honeypot monitor stopped.")

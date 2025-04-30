@@ -8,6 +8,10 @@ import winsound
 import ctypes
 import threading
 
+# Global Thread & Stop Event
+trustguard_thread = None
+stop_trustguard_event = threading.Event()
+
 # Sigcheck
 def check_signature(file_path):
     result = subprocess.run(
@@ -53,82 +57,83 @@ def cert(file_path):
 
 # Show message box for alerts
 def show_message_box():
-    winsound.MessageBeep(winsound.MB_ICONASTERISK)  # Notification sound
-    ctypes.windll.user32.MessageBoxW(0, "RansomPyShield has blocked this app from running due to security reasons", "TrustGuard", 0x30 | 0x1000)  # MSGBOX
+    winsound.MessageBeep(winsound.MB_ICONASTERISK)
+    ctypes.windll.user32.MessageBoxW(
+        0,
+        "RansomPyShield has blocked this app from running due to security reasons",
+        "TrustGuard",
+        0x30 | 0x1000
+    )
 
 # Analyze process signature and perform checks
-def analyze_process_signature(process, max_entropy=7.5):
-    file_path = process.exe()
-    print(f"\nAnalyzing {file_path}...")
-
-    # Sigcheck
-    output = check_signature(file_path)
-    if output:
-        if "Signed" in output:
-            print(f"Process {process.pid} ({process.name()}): Signed by a trusted publisher.")
-        elif "Unsigned" in output:
-            process.kill()
-            print(f"Killed process {process.pid} ({process.name()}): Not signed.")
-            show_message_box()
-            return
-    else:
-        print(f"Process {process.pid} ({process.name()}): Signature status unknown or error.")
-
-    # Entropy
+def analyze_process_signature(process, max_entropy=7.25):
     try:
+        file_path = process.exe()
+        print(f"\nAnalyzing {file_path}...")
+
+        # Sigcheck
+        output = check_signature(file_path)
+        if output:
+            if "Signed" in output:
+                print(f"Process {process.pid} ({process.name()}): Signed by a trusted publisher.")
+            elif "Unsigned" in output:
+                process.kill()
+                print(f"Killed process {process.pid} ({process.name()}): Not signed.")
+                show_message_box()
+                return
+        else:
+            print(f"Process {process.pid} ({process.name()}): Signature status unknown or error.")
+
+        # Entropy
         entropy = calculate_entropy(file_path)
         print(f"Entropy: {entropy:.2f}")
-
-        # Entropy Scan
         if entropy > max_entropy:
             show_message_box()
             process.kill()
             print(f"Killed process {process.pid} ({process.name()}) due to high entropy: {entropy:.2f}")
             return
-    except Exception as e:
-        print(f"Could not calculate entropy: {e}")
 
-    # YARA scans 
-    if packed(file_path) or cert(file_path):
-        show_message_box()
-        process.kill()
-        print(f"Killed process {process.pid} ({process.name()}) due to YARA match.")
+        # YARA scans 
+        if packed(file_path) or cert(file_path):
+            show_message_box()
+            process.kill()
+            print(f"Killed process {process.pid} ({process.name()}) due to YARA match.")
+
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
+        pass
+    except Exception as e:
+        print(f"Error analyzing process: {e}")
 
 # Monitor for new processes
 def monitor_new_processes(stop_event):
     existing_pids = set(p.pid for p in psutil.process_iter())
 
     while not stop_event.is_set():
-        time.sleep(0.1)  # Monitor interval
+        time.sleep(0.1)
         current_pids = set(p.pid for p in psutil.process_iter())
-        
-        # Get new processes
         new_pids = current_pids - existing_pids
+
         for pid in new_pids:
             try:
                 process = psutil.Process(pid)
                 analyze_process_signature(process)
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                pass 
+            except Exception:
+                pass
 
-        # Update the existing process list
         existing_pids = current_pids
 
-# Other variables
-scan_functions = [packed, cert]
-stop_event = threading.Event()
+# control monitoring thread
+def start_trustguard_monitor():
+    global trustguard_thread, stop_trustguard_event
+    if trustguard_thread is None or not trustguard_thread.is_alive():
+        stop_trustguard_event.clear()
+        trustguard_thread = threading.Thread(target=monitor_new_processes, args=(stop_trustguard_event,), daemon=True)
+        trustguard_thread.start()
+        print("[Signature Monitor] Thread started.")
+    else:
+        print("[Signature Monitor] Already running.")
 
-def start_monitoring():
-    global monitoring_thread
-    stop_event.clear()
-    monitoring_thread = threading.Thread(target= monitor_new_processes, args=(stop_event,))
-    monitoring_thread.daemon = True 
-    monitoring_thread.start()
-
-def stop_monitoring():
-    stop_event.set() 
-    
-if __name__ == "__main__":
-    start_monitoring()
-    # Uncomment the line below to stop monitoring when needed
-    # stop_monitoring()
+def stop_trustguard_monitor():
+    global stop_trustguard_event
+    stop_trustguard_event.set()
+    print("[Signature Monitor] Stop signal sent.")

@@ -8,10 +8,12 @@ from notifypy import Notify
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Global flag for stopping the monitoring thread
-stop_flag = threading.Event()
+# Global flag and variables
+observers = []
+monitoring_flag = False
+initial_pids = set()
+threads = []
 
-# Other variables
 user = os.path.expanduser("~")
 
 # Directories to monitor
@@ -19,21 +21,18 @@ MONITORED_DIRECTORIES = [
     os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
     os.path.join(user, "AppData", "Local", "Temp"),
-    os.path.join(user, "AppData", "Roaming"),
-    "C:\\ProgramData",
 ]
-
-# List of processes to exclude from killing
-EXCLUDED_PROCESSES = []
-
-# Set to keep track of monitored PIDs
-initial_pids = set()
-observers = []
-threads = []
 
 # Quarantine directory
 QUARANTINE_DIR = os.path.join(user, "AppData", "Local", "RansomPyShield", "Quarantine")
 os.makedirs(QUARANTINE_DIR, exist_ok=True)  # Create quarantine directory if it doesn't exist
+
+def scan_with_thread(scan_function, file_path, result):
+    try:
+        result[0] = scan_function(file_path)
+    except Exception as e:
+        print(f"Error in thread while running {scan_function.__name__}: {e}")
+        result[0] = False
 
 def warn(file_path):
     notification = Notify()
@@ -41,43 +40,20 @@ def warn(file_path):
     notification.message = f"Ransomware detected: {file_path} \n and has been quarantined"
     notification.send()
 
-def stop_monitoring():
-    stop_flag.set()
-    for observer in observers:
-        observer.stop()
-    for thread in threads:
-        thread.join()
+def kill_process(pid):
+    try:
+        process = psutil.Process(pid)
+        process_name = process.name()
+        process.kill()
+        print(f"Process {process_name} ({pid}) killed.")
+    except Exception as e:
+        print(f"Failed to kill process {pid}: {e}")
 
-class YaraScanHandler(FileSystemEventHandler):
-    def on_created(self, event):
-        if not event.is_directory:
-            print(f"New file created: {event.src_path}")
-            self.perform_scans(event.src_path)
-
-    def on_modified(self, event):
-        if not event.is_directory:
-            print(f"File modified: {event.src_path}")
-            self.perform_scans(event.src_path)
-
-    def on_moved(self, event):
-        if not event.is_directory:
-            print(f"File renamed/moved: {event.src_path}")
-            self.perform_scans(event.src_path)
-
-    def perform_scans(self, file_path):
-        scan_functions = [signature, ransompyshield, suspicious_technique, exploit_scan]
-
-        for scan_function in scan_functions:
-            result = [False]
-            thread = threading.Thread(target=scan_with_thread, args=(scan_function, file_path, result))
-            thread.daemon = True  # Make thread a daemon
-            thread.start()
-            thread.join()  # Wait for the scan to complete
-            if result[0]:
-                quarantine_file(file_path)
-                warn(file_path)  # Call the quarantine function
-                kill_all_new_processes()
-                break  # Stop further scans if any scan detects malicious activity
+def kill_all_new_processes():
+    current_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
+    new_pids = current_pids - initial_pids
+    for pid in new_pids:
+        kill_process(pid)
 
 def quarantine_file(file_path):
     try:
@@ -114,20 +90,9 @@ def scan_file_with_yara(rules, file_path):
         print(f"Error scanning file {file_path}: {e}")
     return False  # Return False if no match is found
 
-def scan_with_thread(scan_function, file_path, result):
-    try:
-        result[0] = scan_function(file_path)
-    except Exception as e:
-        print(f"Error in thread while running {scan_function.__name__}: {e}")
-        result[0] = False
 
 def exploit_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Exploit.yar")
-    rules = load_yara_rules(yara_file_path)
-    return scan_file_with_yara(rules, file_path) if rules else False
-
-def suspicious_technique(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
@@ -136,57 +101,71 @@ def signature(file_path):
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
-def ransompyshield(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "RansomPyShield.yar")
-    rules = load_yara_rules(yara_file_path)
-    return scan_file_with_yara(rules, file_path) if rules else False
+class YaraScanHandler(FileSystemEventHandler):
+    def on_created(self, event):
+        if not event.is_directory:
+            print(f"New file created: {event.src_path}")
+            self.perform_scans(event.src_path)
 
-def is_excluded_process(process_name):
-    return process_name in EXCLUDED_PROCESSES
+    def on_modified(self, event):
+        if not event.is_directory:
+            print(f"File modified: {event.src_path}")
+            self.perform_scans(event.src_path)
 
-def kill_process(pid):
-    try:
-        process = psutil.Process(pid)
-        process_name = process.name()
-        process.kill()
-        print(f"Process {process_name} ({pid}) killed.")
-    except Exception as e:
-        print(f"Failed to kill process {pid}: {e}")
+    def on_moved(self, event):
+        if not event.is_directory:
+            print(f"File renamed/moved: {event.src_path}")
+            self.perform_scans(event.src_path)
 
-def kill_all_new_processes():
-    current_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
-    new_pids = current_pids - initial_pids
-    for pid in new_pids:
-        kill_process(pid)
+    def perform_scans(self, file_path):
+        scan_functions = [signature, exploit_scan]
 
-def monitor_directory(directory):
-    global initial_pids
-    initial_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
+        for scan_function in scan_functions:
+            result = [False]
+            thread = threading.Thread(target=scan_with_thread, args=(scan_function, file_path, result))
+            thread.daemon = True  # Make thread a daemon
+            thread.start()
+            thread.join()  # Wait for the scan to complete
+            if result[0]:
+                # Call the quarantine function & warn user
+                quarantine_file(file_path)
+                warn(file_path)  
+                kill_all_new_processes()
+                break  # Stop further scans if any scan detects malicious activity
 
-    event_handler = YaraScanHandler()
-    observer = Observer()
-    observer.schedule(event_handler, directory, recursive=False)
-    observers.append(observer)
-    observer.start()
-
-    print(f"Monitoring started for {directory}...")
-    try:
-        while not stop_flag.is_set():
-            time.sleep(0.1)
-    finally:
-        observer.stop()
-        observer.join()
 
 def start_monitoring():
-    threads = []
+    global monitoring_flag, observers, initial_pids
+    if monitoring_flag:
+        print("Monitoring is already running.")
+        return
+
+    initial_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
+    monitoring_flag = True
+    print("Starting YARA monitoring...")
+
     for directory in MONITORED_DIRECTORIES:
-        thread = threading.Thread(target=monitor_directory, args=(directory,))
-        thread.daemon = True  # Make thread a daemon
-        threads.append(thread)
-        thread.start()
+        if os.path.exists(directory):
+            event_handler = YaraScanHandler()
+            observer = Observer()
+            observer.schedule(event_handler, directory, recursive=True)
+            observer.daemon = True
+            observer.start()
+            observers.append(observer)
+            print(f"Monitoring started on: {directory}")
+        else:
+            print(f"Directory does not exist: {directory}")
 
-    for thread in threads:
-        thread.join()
+def stop_monitoring():
+    global monitoring_flag, observers
+    if not monitoring_flag:
+        print("Monitoring is not running.")
+        return
 
-if __name__ == "__main__":
-    start_monitoring()
+    
+    for observer in observers:
+        observer.stop()
+        observer.join()
+    observers.clear()
+    print("Yara monitoring stopped.")
+    monitoring_flag = False

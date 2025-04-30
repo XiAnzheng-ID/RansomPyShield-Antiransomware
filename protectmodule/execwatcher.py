@@ -37,32 +37,17 @@ blacklist_commands = [
     "vssadmin", "nouaccheck", "disableuac", "bypass",
 ]
 
-process_list = ['vssadmin.exe', 'WMIC.exe'] #make sure vssadmin.exe and wmic.exe are killed
+process_list = ['vssadmin.exe', 'WMIC.exe']  # make sure vssadmin.exe and wmic.exe are killed
 is_monitoring = False
 process_threads = {}  # Dictionary to store running threads for each process
+monitor_thread = None # Declare monitor_thread globally
+stop_event_cmdmonitor = threading.Event() # Declare stop_event_cmdmonitor globally
 
 def warn(cmdline):
     notification = Notify()
     notification.title = "RansomPyShield"
-    notification.message = f"Execution Watcher have prevented a suspicious command:\n {cmdline} \n from executing"
+    notification.message = f"Execution Watcher have prevented a suspicious command from executing:\n {cmdline} \n"
     notification.send()
-
-def start_monitoring():
-    global is_monitoring
-    is_monitoring = True
-    monitoring_thread = threading.Thread(target=monitor_new_process, daemon=True)
-    monitoring_thread.start()
-
-def stop_monitoring():
-    global is_monitoring
-    is_monitoring = False  # Set flag untuk menghentikan monitoring
-
-    # Tunggu hingga semua thread selesai
-    for pid, thread in process_threads.items():
-        if thread.is_alive():
-            thread.join()  # Tunggu hingga thread selesai
-
-    print("All monitoring threads have been stopped.")
 
 def kill_vssadmin_and_wmic(process_names):
     for proc in psutil.process_iter(['pid', 'name']):
@@ -116,12 +101,12 @@ def monitor_process(pid, name, cmdline):
         if pid in process_threads:
             del process_threads[pid]
 
-def monitor_new_process():
+def monitor_new_process(stop_event):
     global is_monitoring
 
     while True:
-        if not is_monitoring:
-            time.sleep(1)
+        if not is_monitoring or stop_event.is_set():
+            time.sleep(0.1)
             break  # Keluar dari loop jika monitoring dihentikan
 
         for process in psutil.process_iter(['pid', 'name', 'cmdline']):
@@ -137,5 +122,21 @@ def monitor_new_process():
 
         time.sleep(0.1)
 
-if __name__ == "__main__":
-    start_monitoring()  # Memulai monitoring saat script dijalankan
+# Fungsi untuk memulai pemantauan proses
+def start_monitoring_cmd():
+    global monitor_thread, stop_event_cmdmonitor, is_monitoring
+    is_monitoring = True
+    if monitor_thread is None or not monitor_thread.is_alive():
+        stop_event_cmdmonitor.clear()
+        monitor_thread = threading.Thread(target=monitor_new_process, args=(stop_event_cmdmonitor,), daemon=True)
+        monitor_thread.start()
+        print("[CMD MONITOR] Started.")
+
+# Fungsi untuk menghentikan pemantauan proses
+def stop_monitoring_cmd():
+    global stop_event_cmdmonitor, is_monitoring
+    is_monitoring = False
+    stop_event_cmdmonitor.set()
+    if monitor_thread is not None and monitor_thread.is_alive():
+        monitor_thread.join()  # Wait for the thread to finish
+    print("[CMD MONITOR] Stopped.")
