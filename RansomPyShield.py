@@ -15,7 +15,7 @@ from ui.helpui import help_ui
 from ui.settingsui import settings_ui
 
 # Var
-app_version = "09.11.2024"
+app_version = "01.05.2025"
 
 # Other Folder & Honeypot
 appdata_path = os.getenv('LOCALAPPDATA')
