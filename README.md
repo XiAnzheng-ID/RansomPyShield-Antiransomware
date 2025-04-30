@@ -42,12 +42,8 @@ Optional Feature : Panic Button incase some undetected Screenlocker managed to l
 6. Let my app do the work
 
 Note:
-Dont forget to fill the Whitelist on yaramodule script else it will scan everything including system files
-or use my pre configure installer (check release section) , if you lazy to do it
-
-To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
-
-Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift + K , this will kill all new running process after the process snapshot
+*To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
+*Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift + K , this will kill all new running process after the process snapshot
 
 # WEAKNESS/KNOWN BUG AND FEATURE
 ### FEATURES:
