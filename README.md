@@ -60,7 +60,7 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
 * Convention Engine Yara Rules (<a href="https://github.com/stvemillertime/ConventionEngine/tree/master">Convention Engine Github</a>)
 * Blacklist based on Sha256 hash from Malware Bazaar "Query tag" API (<a href="https://bazaar.abuse.ch/">Malware Bazaar</a>)
-* Whitelist (Hardcoded on script to make it hard for threat actor to modify the whitelist system , ill find a workaround to make it easier)
+* ~~Whitelist~~ (Removed , i will try to find a better solution)
 * Support your own custom yara rules
 * Panic Button (got a Screenlocker? dont worry press Ctrl + Shift + K)
 * Suspicious Exec/Command Filter (this will watch all cmd & PS call and compare with my blacklisted keyword that shouldnt be used in a regular user session)
@@ -68,16 +68,15 @@ Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift +
 * TrustGuard (Block all executable with High Entropy, Packed(Yara Rule), Leaked Digital Signer(Yara Rule), Unsigned)
 
 ### Known Weakness and Bug:
-* there is a chance of False Positive , if this happen just close this app then run the blocked app again (report if this happen)
-* Will close other app and process during detection
+* there is a chance of False Positive , if this happen just turn off features on settings (report if this happen)
+* May/Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Some Fileless Ransomware can bypass this app(Screenlocker or Disklocker/wiper like Petya) (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
+* Some Screenlocker Ransomware can bypass this app (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
-* if you turn off then turning on the Realtime Protection again the Yara Scan feature wont work anymore (for now just re open the app)
 * Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
-* Whitelist still hardcoded on code (i will try to find a work-around)
+* ~~Whitelist still hardcoded on code~~ (Removed , i will try to find a better solution)
 * You need Sigcheck from sysinternals for the TrustGuard else it will crash
 
 # To Be Added (Ideas)
