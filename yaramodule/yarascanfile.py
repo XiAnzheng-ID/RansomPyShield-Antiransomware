@@ -101,6 +101,11 @@ def signature(file_path):
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
+def convention_engine(file_path):
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "ConventionEngine.yar")
+    rules = load_yara_rules(yara_file_path)
+    return scan_file_with_yara(rules, file_path) if rules else False
+
 class YaraScanHandler(FileSystemEventHandler):
     def on_created(self, event):
         if not event.is_directory:
@@ -118,7 +123,7 @@ class YaraScanHandler(FileSystemEventHandler):
             self.perform_scans(event.src_path)
 
     def perform_scans(self, file_path):
-        scan_functions = [signature, exploit_scan]
+        scan_functions = [signature, exploit_scan, convention_engine]
 
         for scan_function in scan_functions:
             result = [False]

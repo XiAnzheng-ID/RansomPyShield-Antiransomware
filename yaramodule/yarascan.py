@@ -68,13 +68,6 @@ def rename_and_quarantine(file_path):
         print(f"Failed to quarantine file {file_path}: {e}")
 
 # YARA scan functions
-def convention_engine(file_path):
-    rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "ConventionEngine.yar")
-    rules = load_yara_rules(rule_path)
-    if rules and scan_file_with_yara(rules, file_path):
-        sus_warn(file_path)
-        return True
-    return False
 
 def signature(file_path):
     rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
@@ -103,7 +96,7 @@ def kill_process(pid):
         print(f"Failed to kill process {pid}: {e}")
 
 def perform_scans(file_path, pid):
-    scan_functions = [signature, convention_engine]
+    scan_functions = [signature]
     custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
     if os.path.exists(custom_yara_path):
         scan_functions.append(custom_rule_scan)
