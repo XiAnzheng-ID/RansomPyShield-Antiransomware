@@ -1,7 +1,6 @@
 import yara
 import os
 import psutil
-import time
 import threading
 import shutil  
 from notifypy import Notify
@@ -14,13 +13,14 @@ monitoring_flag = False
 initial_pids = set()
 threads = []
 
+localappdata = os.getenv("LOCALAPPDATA")
 user = os.path.expanduser("~")
 
 # Directories to monitor
 MONITORED_DIRECTORIES = [
     os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
-    os.path.join(user, "AppData", "Local", "Temp"),
+    os.path.join(localappdata, "Temp"),
 ]
 
 # Quarantine directory
@@ -36,30 +36,15 @@ def scan_with_thread(scan_function, file_path, result):
 
 def warn(file_path):
     notification = Notify()
-    notification.title = "RansomPyShield"
-    notification.message = f"Ransomware detected: {file_path} \n and has been quarantined"
+    notification.title = "RansomPyShield - Yara"
+    notification.message = f"Suspicious File detected: {file_path} \n and has been quarantined"
     notification.send()
-
-def kill_process(pid):
-    try:
-        process = psutil.Process(pid)
-        process_name = process.name()
-        process.kill()
-        print(f"Process {process_name} ({pid}) killed.")
-    except Exception as e:
-        print(f"Failed to kill process {pid}: {e}")
-
-def kill_all_new_processes():
-    current_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
-    new_pids = current_pids - initial_pids
-    for pid in new_pids:
-        kill_process(pid)
 
 def quarantine_file(file_path):
     try:
         # Get the original file name and extension
         base, ext = os.path.splitext(file_path)
-        new_file_path = f"{base}.ransom"  # Add .ransom extension
+        new_file_path = f"{base}.sus"  # Add .ransom extension
         os.rename(file_path, new_file_path)  # Rename the file
 
         # Move the renamed file to the quarantine directory
@@ -97,7 +82,7 @@ def exploit_scan(file_path):
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def signature(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
@@ -135,7 +120,6 @@ class YaraScanHandler(FileSystemEventHandler):
                 # Call the quarantine function & warn user
                 quarantine_file(file_path)
                 warn(file_path)  
-                kill_all_new_processes()
                 break  # Stop further scans if any scan detects malicious activity
 
 

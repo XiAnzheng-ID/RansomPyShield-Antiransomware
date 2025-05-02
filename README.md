@@ -1,6 +1,6 @@
 # RansomPyShield - Antiransomware
-Whats this for? this is my pre-configure and driverless Antiransomware app using Honeypot technique , YARA Rules , And Other stuff 
-That aim to detect and prevent a total lockdown during a Zero day Ransomware attack where your EDR or Security Solution failed to detect it
+Whats this for? this is my pre-configure and driverless Antiransomware app/script using Honeypot technique , YARA Rules , Machine Learning and other stuff
+That aim to detect and prevent a total lockdown during a Zero day Ransomware attack where your EDR or Security Solution failed to detect it or Miss Configuration
 (Dont worry this app can also Detect already known Ransomware using Yara and Malware Bazaar API)
 
 ### ⚠️DISCLAIMER⚠️
@@ -8,9 +8,10 @@ That aim to detect and prevent a total lockdown during a Zero day Ransomware att
 * Some Advanced Targeted Ransomware Attack can still bypass this app
 * Some Yara Rules that been used by this project are from other public repo and people , credit to their respective owner(check the yara files for more information about them)
 * This Tool only act as a Lastline of defense incase there is a miss configuration or a failure of your EDR/Security Solution
-* There is a chance some of your files still be encrypted (first and second deep folder&file from root volume is expected to be encrypted during an attack)
-* Made to be compatible/run with other EDR/Security Program
-* This app only Scan & Protect on a folder that Ransomware and other Malware mostly used to spread and infect
+* There is a chance some of your files still be encrypted (first and second deep folder&file from root volume is expected to be encrypted during zero day unknown attack)
+* Made to be compatible/run with other EDR/Security Program (Report if any EDR/AV detecting or this script behave strange)
+* Machine Learning will only kill the detected Process (To Prevent critical file deletion/quarantine)
+* Memory Scanner will only quarantined known Signature (To Prevent critical file deletion/quarantine)
 
 (Compile your own version for added protection or again use other EDR/Security Solution)
 Report any False Positive and Missed Detection if you can , i really appriciate it
@@ -35,14 +36,16 @@ Optional Feature : Panic Button incase some undetected Screenlocker managed to l
 
 # How to Use?
 1. Download Sigcheck from <a href="https://learn.microsoft.com/id-id/sysinternals/downloads/sigcheck">Sysinternals</a>
-2. Run my App/Script , dont turn on the feature yet
-3. Press "Open Honeypot Folder"
-4. Then fill the Folder with dummy file
-5. Turn on my Antiransomware Feature
-6. Let my app do the work
+2. Download blint.exe from <a href="https://github.com/owasp-dep-scan/blint">blint Github</a>
+3. Put Sigcheck and blint in the same directory as the script/compiled script
+4. Run my App/Script , dont turn on the feature yet
+5. Press "Open Honeypot Folder"
+6. Then fill the Folder with dummy file
+7. Open Settings and turn on any feature you need
+8. Let my app do the work
 
 Note:
-*To use your own custom Yara Rules just create a new .yar file with name "Custom" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
+*To use your own custom Yara Rules just create a new .yar file with name "Custom.yar" in C:\Users\\(Your Username)\AppData\Local\RansomPyShield\Rules
 *Got a screenlocker that my app wont detect? dont worry just Press Ctrl + Shift + K , this will kill all new running process after the process snapshot
 
 # WEAKNESS/KNOWN BUG AND FEATURE
@@ -51,6 +54,7 @@ Note:
 * Easy GUI
 * Free and Open Source you can Edit and Compile it to your liking or even made your own version for added protection
 * Honeypot
+* Machine Learning trained by myself (XGBoost-Custom Hyperparameter) , that can be update anytime after i do re-train (<a href="https://github.com/XiAnzheng-ID/RansomPyShield-Model">My Machine Learning Model</a>)
 * YARA Rules that can be updated automatically (<a href="https://github.com/InQuest/awesome-yara">Custom curated By Me from other Public Repo and Place(InQuest awesome-yara)</a>)
 * Exploit Blocker(Based on YARA Rules)
 * Suspicious Generic Ransomware & Bypass Technique detection (Based on Yara Rules)
@@ -67,16 +71,17 @@ Note:
 * there is a chance of False Positive , if this happen just turn off features on settings (report if this happen)
 * May/Will close other app and process during detection
 * Ransomware sometimes still can Encrypt some of your file
-* Some Screenlocker Ransomware can bypass this app (This is because my app depends heavily on Yara Rules , Honeypot , Hash)
+* Some Screenlocker Ransomware can bypass this app (This is because my app depends heavily on Yara Rules , Honeypot , Hash, Machine-Learning)
 * Some ransomware can bypass this app by killing this app process or check where's my honeypot file and skip it (i probably know how to fix this?)
 * Depends heavily with Windows API library (You need to optimize and rewrite the script again to use on other OS)
-* Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain it as long as possible)
+* Spaghetti Code (this one i wont fix :P , this was only my side lil project for my uni assignment but ill try to maintain and it as long as possible)
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
 * ~~Whitelist still hardcoded on code~~ (Removed , i will try to find a better solution)
 * You need Sigcheck from sysinternals for the TrustGuard else it will crash
+* You need blint.exe from owasp-dep-scan's Github for the Machine Learning else it will reduced accuracy and increase False Positive
+* Machine Learning feature will crash and break if i added new feature during re-training and update the github
 
 # To Be Added (Ideas)
-* Machine-Learning (In Progress) (<a href="https://github.com/XiAnzheng-ID/RansomPyShield-Model">RansomPyShield-Model</a>)
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
 * Registry Recovery & Protection
 * Simple Anti-Tamper & Self-Defense Mechanism
@@ -93,7 +98,8 @@ python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --rem
 ```
 or 
 ```bash
-python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
+python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --remove-output 
+--windows-console-mode=disable RansomPyShield.py
 ```
 if you still need console for debugging or other stuff just remove the --windows-console-mode=disable argument
 

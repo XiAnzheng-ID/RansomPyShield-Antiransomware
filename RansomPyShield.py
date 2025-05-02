@@ -40,7 +40,7 @@ def run_with_uac():
         elevate.elevate()
 
 # Update Yara rules periodically
-def update_rules_scheduler(interval=3600):  # 3600 seconds = 1 hour
+def update_rules_scheduler(interval=3600):  # 3600 seconds
     while True:
         try:
             rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
@@ -139,16 +139,16 @@ if __name__ == "__main__":
     # Get YARA rules
     rule = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/Rule.zip"
     zip_rule = "Rule.zip"
-    extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules")
+    extract_to = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
 
     url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware/raw/main/hashes.txt"
     save_directory = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
 
     try:
         print("Updating Hashes & Rules....")
-        gr.get_rules(rule, zip_rule, extract_to)
-        gh.download_file_from_github(url, save_directory)
-        start_hashes_update_thread()
+        #gr.get_rules(rule, zip_rule, extract_to)
+        #gh.download_file_from_github(url, save_directory)
+        #start_hashes_update_thread()
         main_ui()
     except Exception as e:
         print(e)

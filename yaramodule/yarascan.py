@@ -68,7 +68,6 @@ def rename_and_quarantine(file_path):
         print(f"Failed to quarantine file {file_path}: {e}")
 
 # YARA scan functions
-
 def signature(file_path):
     rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
     rules = load_yara_rules(rule_path)

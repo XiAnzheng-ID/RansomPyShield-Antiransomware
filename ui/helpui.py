@@ -18,42 +18,35 @@ def help_ui():
     frame.pack()
     
     text = """
-            1. Klik tombol "Folder Honeypot" pada Aplikasi
-            2. Masukan File yang akan menjadi umpan untuk Ransomware 
-                 ke dalam folder yang sudah di sediakan
-            3. Nyalakan fitur dengan cara klik tombol "Antiransomware"
-            4. Biarkan aplikasi berjalan
-                (bisa kalian minimize jika mengganggu)
-            5. lakukan aktivitas kalian seperti biasa :D
+          How to Use:
 
-            Jika Aplikasi mendeteksi adanya Ransomware:
-            1. Akan ada notifikasi peringatan(MessageBox) yang
-                 akan muncul untuk meperingatkan Pengguna
-            2. Kalian bisa cek laporan lebih detail nya pada
-                 Log Terminal(Waktu,direktori,nama dari proses)
-            3. Jika file pada folder Honeypot yang di sediakan terenkripsi 
-                 bisa kalian ganti dengan yang baru, tetapi jika tidak
-                 biarkan saja
+          1. Click "Honeypot Folder" in the App.
+          2. Place decoy files (for Ransomware) into the provided folder.
+          3. Turn on the feature by clicking "Antiransomware".
+          4. Let the app run (minimize if needed).
+          5. Continue your normal activities.
 
-            Notifikasi dan Detail Log pada Terminal hanya akan
-            muncul ketika terdeteksi ada nya aktivitas Ransomware
-            jika tidak muncul apa apa itu berarti perangkat masih aman
-            
-            Jenis file yg disarankan sebagai umpan:
-            - Dokumen atau Text
-            - Gambar atau Foto
-            - Video atau Film
-            - Audio atau Musik
-            - Arsip atau file backup
-            - Source Code atau Script
-            - file Adobe atau design lain nya
-            - beberapa Ransomware juga mentarget file executable(.exe)
+          If Ransomware is Detected:
+          1. A warning message (MessageBox) or Notification will appear.
+          2. Check the Log Terminal for details (if you prefer it).
+          3. If files in the Honeypot folder are encrypted, you can replace them. Otherwise, leave them.
 
-            Note: 
-            Jika kalian melihat folder hidden bisa jadi itu adalah
-            folder milik Aplikasi ini , tolong jgn di hapus ataupun
-            di sentuh karena akan mengurangi efektivitas dan memicu 
-            keamanan dari aplikasi ini
+          Notifications and the Log Terminal will only appear when Ransomware activity 
+          is detected. If nothing appears, your device is likely safe.
+
+          Recommended Decoy File Types:
+          - Documents or Text
+          - Images or Photos
+          - Videos or Movies
+          - Audio or Music
+          - Archives or Backups
+          - Source Code or Scripts
+          - Adobe or other design files
+          - Some Ransomware targets executable (.exe) files.
+
+          Note:
+          Hidden folders might belong to this App. Please do not delete or modify them, 
+          as this can reduce the App's effectiveness and security.
     """
     label = ctk.CTkLabel(master=frame, text=text, justify="left", anchor="w")
     label.pack()

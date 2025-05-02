@@ -34,7 +34,7 @@ blacklist_commands = [
     "disableonaccessprotection", "disablescanonrealtimeenable", "disablerealtimemonitoring",
     "spynetreporting", "submitsamplesconsent", "disablescriptscanning", "disablearchivescanning",
     "disableintrusionpreventionsystem", "vdisablerealtimemonitoring", "securityhealth", "hidescahealth",
-    "vssadmin", "nouaccheck", "disableuac", "bypass",
+    "nouaccheck", "disableuac", "bypass",
 ]
 
 process_list = ['vssadmin.exe', 'WMIC.exe']  # make sure vssadmin.exe and wmic.exe are killed
