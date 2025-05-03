@@ -79,12 +79,14 @@ def extract_capa_capabilities(file_path, capa_path="capa.exe", timeout_sec=60): 
         result = subprocess.run(
             [capa_path, file_path],
             stdout=subprocess.PIPE,
+            creationflags=subprocess.CREATE_NO_WINDOW,
             stderr=subprocess.DEVNULL,
             text=True,
             shell=False,
             timeout=timeout_sec,
             encoding="utf-8",
-            errors="ignore"
+            errors="ignore",
+
         )
 
         output = result.stdout
@@ -118,6 +120,7 @@ def extract_blint_findings(file_path, blint_path="blint.exe", timeout_sec=60): #
     try:
         result = subprocess.run(
             [blint_path, "sbom", "--stdout", "-i", file_path],
+            creationflags=subprocess.CREATE_NO_WINDOW,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
