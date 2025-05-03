@@ -13,14 +13,16 @@ monitoring_flag = False
 initial_pids = set()
 threads = []
 
-localappdata = os.getenv("LOCALAPPDATA")
 user = os.path.expanduser("~")
 
 # Directories to monitor
 MONITORED_DIRECTORIES = [
-    os.path.join(user, "Downloads"),
     os.path.join(user, "Desktop"),
-    os.path.join(localappdata, "Temp"),
+    os.path.join(user, "Downloads"),
+    os.path.join(user, "Documents"),
+    os.path.join(user, "Pictures"),
+    os.path.join(user, "Videos"),
+    os.path.join(user, "Music"),
 ]
 
 # Quarantine directory
@@ -44,7 +46,7 @@ def quarantine_file(file_path):
     try:
         # Get the original file name and extension
         base, ext = os.path.splitext(file_path)
-        new_file_path = f"{base}.sus"  # Add .ransom extension
+        new_file_path = f"{base}.malware"  # Add .ransom extension
         os.rename(file_path, new_file_path)  # Rename the file
 
         # Move the renamed file to the quarantine directory
@@ -75,19 +77,23 @@ def scan_file_with_yara(rules, file_path):
         print(f"Error scanning file {file_path}: {e}")
     return False  # Return False if no match is found
 
-
 def exploit_scan(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Exploit.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def signature(file_path):
-    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Signature.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
 def convention_engine(file_path):
     yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "ConventionEngine.yar")
+    rules = load_yara_rules(yara_file_path)
+    return scan_file_with_yara(rules, file_path) if rules else False
+
+def suspiciousfile(file_path):
+    yara_file_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
     rules = load_yara_rules(yara_file_path)
     return scan_file_with_yara(rules, file_path) if rules else False
 
@@ -108,7 +114,7 @@ class YaraScanHandler(FileSystemEventHandler):
             self.perform_scans(event.src_path)
 
     def perform_scans(self, file_path):
-        scan_functions = [signature, exploit_scan, convention_engine]
+        scan_functions = [signature, suspiciousfile, exploit_scan, convention_engine]
 
         for scan_function in scan_functions:
             result = [False]

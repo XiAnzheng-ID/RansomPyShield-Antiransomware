@@ -109,7 +109,7 @@ def monitor_new_processes(model, yara_rules, use_blint, blint_path, use_sigcheck
 
     while monitoring_active:
         try:
-            time.sleep(0.5)
+            time.sleep(0.1)
             current_pids = set(p.pid for p in psutil.process_iter())
             new_pids = current_pids - known_pids
 
