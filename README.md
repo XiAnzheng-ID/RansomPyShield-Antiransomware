@@ -80,6 +80,7 @@ Note:
 * You need Sigcheck from sysinternals for the TrustGuard else it will crash
 * You need blint.exe from owasp-dep-scan's Github for the Machine Learning else it will reduced accuracy and increase False Positive
 * Machine Learning feature will crash and break if i added new feature during re-training and update the github
+* Machine Learning kinda slow because how i use blint.exe instead of the blint library (blint library keep giving me error during pip install , may change in the future)
 
 # To Be Added (Ideas)
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
