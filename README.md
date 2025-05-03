@@ -22,7 +22,6 @@ Report any False Positive and Missed Detection if you can , i really appriciate 
 * <a href="https://www.youtube.com/watch?v=WKGnyCcJn8c">QoL Update</a>
 * <a href="https://www.youtube.com/watch?v=RsOikfXwLHg">Stable Release</a>
 * <a href="https://www.youtube.com/watch?v=rz8vNeoxVVE">Yara Implementation</a>
-* <a href="https://www.youtube.com/watch?v=wyfi-wtBG_I">Machine Learning</a>
 
 ### How My Script work?
 * First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder) 
@@ -91,15 +90,15 @@ Note:
 * Rename the folder name of my honeypot folder in the my code
 * Compile my Script using Nuitka this can help prevent some Ransomware/Malware kill the Compiled app
 ```bash
-python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
+python -m nuitka --onefile --windows-uac-admin --enable-plugin=tk-inter --include-package=xgboost --remove-output --windows-console-mode=disable RansomPyShield.py
 ```
 or 
 ```bash
-python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --remove-output --windows-console-mode=disable RansomPyShield.py
+python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --include-package=xgboost --remove-output --windows-console-mode=disable RansomPyShield.py
 ```
 or 
 ```bash
-python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --remove-output 
+python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --include-package=xgboost --remove-output 
 --windows-console-mode=disable RansomPyShield.py
 ```
 if you still need console for debugging or other stuff just remove the --windows-console-mode=disable argument
