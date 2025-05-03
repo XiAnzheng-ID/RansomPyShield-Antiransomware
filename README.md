@@ -22,6 +22,7 @@ Report any False Positive and Missed Detection if you can , i really appriciate 
 * <a href="https://www.youtube.com/watch?v=WKGnyCcJn8c">QoL Update</a>
 * <a href="https://www.youtube.com/watch?v=RsOikfXwLHg">Stable Release</a>
 * <a href="https://www.youtube.com/watch?v=rz8vNeoxVVE">Yara Implementation</a>
+* <a href="https://www.youtube.com/watch?v=wyfi-wtBG_I">Machine Learning</a>
 
 ### How My Script work?
 * First my script will create a Honeypot folder called "Honey" (which i recommend to change it before you use or compile it, someday a Ransomware Criminal may see this Repo and skip the Honeypot folder) 
