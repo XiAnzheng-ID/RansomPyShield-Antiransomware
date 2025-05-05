@@ -99,8 +99,7 @@ python -m nuitka --standalone --windows-uac-admin --enable-plugin=tk-inter --inc
 ```
 or 
 ```bash
-python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --include-package=xgboost --include-package=sklearn --remove-output 
---windows-console-mode=disable RansomPyShield.py
+python -m nuitka --app --windows-uac-admin --enable-plugin=tk-inter --include-package=xgboost --include-package=sklearn --remove-output --windows-console-mode=disable RansomPyShield.py
 ```
 if you still need console for debugging or other stuff just remove the --windows-console-mode=disable argument
 
