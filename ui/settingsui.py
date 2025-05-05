@@ -1,5 +1,5 @@
+import winsound , ctypes , time
 import customtkinter as ctk
-import winsound , ctypes
 from honeypot.honeymanager import clean_and_copy_honey_files
 from honeypot.foldermonitor import start_honeypot_monitor , stop_honeypot_monitor
 from yaramodule.yarascanfile import start_monitoring , stop_monitoring
@@ -34,6 +34,7 @@ def settings_ui():
         switch_states["honeypot"] = honeypot_switch.get()
         if honeypot_switch.get() == "on":
             clean_and_copy_honey_files()
+            time.sleep(2)
             start_honeypot_monitor()
         else:
             stop_honeypot_monitor()

@@ -11,11 +11,10 @@ from machinelearning.extract import extract_pe_features, load_yara_rules, extrac
 MODEL_FEATURES = [
     'number_of_sections','entry_point','dll_characteristics','contain_crypto_address','is_packed',
     'ransomware_command_indicator','suspicious_technique_indicator','contain_tor_link','using_encryption_library','ransomware_string_indicator',
-    'suspicious_entropy_and_indicator','Check_for_Debugger','yara_match_count','is_signed','is_cert_valid',
-    'unique_section_names','max_entropy','min_entropy','mean_entropy','SectionsMinRawsize',
-    'SectionMaxRawsize','SectionsMeanRawsize','SectionsMinVirtualsize','SectionMaxVirtualsize','SectionsMeanVirtualsize',
-    'imported_dll_count','imported_function_count','exported_function_count',
-    'blint_guard_cf','blint_high_entropy_va','blint_no_bind','blint_no_seh','blint_nx_compat'
+    'suspicious_entropy_and_indicator','Check_for_Debugger','ConventionEngine_indicator','yara_match_count','unique_section_names',
+    'max_entropy','min_entropy','mean_entropy','SectionsMinRawsize','SectionMaxRawsize',
+    'SectionsMeanRawsize','SectionsMinVirtualsize','SectionMaxVirtualsize','SectionsMeanVirtualsize','imported_dll_count',
+    'imported_function_count','exported_function_count'
 ]
 
 ALLOWED_EXTENSIONS = ('.exe', '.EXE', 'dll', '.DLL', '.ransom', '.malware', '.mal', '.virus')
@@ -27,7 +26,7 @@ def parse_blint_flags(blint_output):
     flags = set(f.strip() for f in blint_output.split(",") if f.strip())
     return flags
 
-def interpret_probability(probability, ransomware_threshold=0.60, gray_threshold=0.50):
+def interpret_probability(probability, ransomware_threshold=0.50, gray_threshold=0.50):
     prob_ransomware = probability[1]
     if prob_ransomware >= ransomware_threshold:
         return "Ransomware/Malware"
@@ -48,7 +47,7 @@ def kill_process(pid):
     except Exception as e:
         print(f"[ERROR] Failed to terminate process with PID {pid}: {e}")
 
-def scan_file(file_path, model, yara_rules, use_blint=False, blint_path="blint.exe", use_sigcheck=False, sigcheck_path="sigcheck.exe", ransomware_threshold=0.70, pid=None):
+def scan_file(file_path, model, yara_rules, use_blint=False, blint_path="blint.exe", use_sigcheck=False, sigcheck_path="sigcheck.exe", ransomware_threshold=0.50, pid=None):
     features = extract_pe_features(file_path, yara_rules, label="unknown")
     if not features:
         print(f"[ERROR] Failed to extract {file_path}")
@@ -146,8 +145,8 @@ def start_ml_monitoring():
         model = pickle.load(f)
     yara_rules, _ = load_yara_rules(yara_rules_dir)
 
-    use_blint = True
-    use_sigcheck = True
+    use_blint = False
+    use_sigcheck = False
     blint_path = "blint.exe"
     sigcheck_path = "sigcheck.exe"
 

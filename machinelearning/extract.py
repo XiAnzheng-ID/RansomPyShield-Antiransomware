@@ -28,6 +28,7 @@ YARA_LABEL_MAPPING = {
     "RANSOMWARE_Custom.yar": "ransomware_string_indicator",
     "Sus_Obf_Enc_Spoof_Hide_PE.yar": "suspicious_entropy_and_indicator",
     "AntiDebug.yar": "Check_for_Debugger",
+    "ConventionEngine.yar": "ConventionEngine_indicator"
 }
 
 def load_yara_rules(yara_dir):
@@ -52,11 +53,11 @@ def scan_with_yara(file_path, yara_rules):
     try:
         matches = yara_rules.match(file_path)
         matched_labels = set()
-        matched_rule_names = []  # ← nama-nama rule yang match
+        matched_rule_names = []
         yara_match_count = len(matches)
 
         for match in matches:
-            matched_rule_names.append(match.rule)  # ← ambil nama rule-nya
+            matched_rule_names.append(match.rule)  
             namespace = match.namespace
             if namespace in YARA_LABEL_MAPPING:
                 matched_labels.add(YARA_LABEL_MAPPING[namespace])
