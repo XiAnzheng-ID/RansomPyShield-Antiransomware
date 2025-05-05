@@ -79,9 +79,8 @@ Note:
 * Still cant detect old Honeypot folder (for now just delete any hidden folder that you dont make manually when the app/script doest running)
 * ~~Whitelist still hardcoded on code~~ (Removed , i will try to find a better solution)
 * You need Sigcheck from sysinternals for the TrustGuard else it will crash
-* You need blint.exe from owasp-dep-scan's Github for the Machine Learning else it will reduced accuracy and increase False Positive
 * Machine Learning feature will crash and break if i added new feature during re-training and update the github
-* Machine Learning kinda slow because how i use blint.exe instead of the blint library (blint library keep giving me error during pip install , may change in the future)
+* Some Machine Learning feature is removed not worth for slower runtime and response (will add it back later after found some optimization or way ig?) , dont worry accuracy is pretty much the same on 1-3% different
 
 # To Be Added (Ideas)
 * Memory Dump (Hoping that the Key is in the Memory for further analysis and decryption)
