@@ -81,15 +81,6 @@ def scan_file(file_path, model, yara_rules, use_blint=False, blint_path="blint.e
     verdict = interpret_probability(probability)
     print(f"Verdict            : {verdict}")
 
-    if hasattr(model, "feature_importances_"):
-        importances = model.feature_importances_
-        top_n = 50
-        sorted_idx = np.argsort(importances)[::-1][:top_n]
-        print("[INFO] Top features:")
-        for idx in sorted_idx:
-            fname = MODEL_FEATURES[idx]
-            print(f"  - {fname}: {df.iloc[0][fname]} (importance: {importances[idx]:.4f})")
-
     # Processing the process if it exceeds the threshold
     if probability[1] >= ransomware_threshold:
         print("[WARNING] Ransomware/Malware detected!")

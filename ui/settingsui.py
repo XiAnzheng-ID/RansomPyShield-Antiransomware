@@ -2,7 +2,6 @@ import winsound , ctypes , time
 import customtkinter as ctk
 from honeypot.honeymanager import clean_and_copy_honey_files
 from honeypot.foldermonitor import start_honeypot_monitor , stop_honeypot_monitor
-from yaramodule.yarascanfile import start_monitoring , stop_monitoring
 from yaramodule.yarascan import start_yara_monitor , stop_yara_monitor
 from blacklist.blacklistscan import start_hash_monitor , stop_hash_monitor
 from protectmodule.trustguard import start_trustguard_monitor , stop_trustguard_monitor
@@ -52,10 +51,8 @@ def settings_ui():
     def yara_switch_callback(yara_switch):
         switch_states["yara"] = yara_switch.get()
         if yara_switch.get() == "on":
-            start_monitoring()
             start_yara_monitor()
         else:
-            stop_monitoring()
             stop_yara_monitor()
 
     yara_switch = ctk.StringVar(value=switch_states["yara"])

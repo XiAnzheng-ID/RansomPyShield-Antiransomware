@@ -77,6 +77,22 @@ def signature(file_path):
         return True
     return False
 
+def exploit_scan(file_path):
+    rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Exploit.yar")
+    rules = load_yara_rules(rule_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        sus_warn(file_path)
+        return True
+    return False
+
+def suspicious_scan(file_path):
+    rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "red-is-sus.yar")
+    rules = load_yara_rules(rule_path)
+    if rules and scan_file_with_yara(rules, file_path):
+        sus_warn(file_path)
+        return True
+    return False
+
 def custom_rule_scan(file_path):
     rule_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
     rules = load_yara_rules(rule_path)
@@ -95,7 +111,7 @@ def kill_process(pid):
         print(f"Failed to kill process {pid}: {e}")
 
 def perform_scans(file_path, pid):
-    scan_functions = [signature]
+    scan_functions = [signature, exploit_scan, suspicious_scan]
     custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
     if os.path.exists(custom_yara_path):
         scan_functions.append(custom_rule_scan)
@@ -128,7 +144,7 @@ def yara_monitor_loop():
     monitored_pids = set(proc.pid for proc in psutil.process_iter(['pid']))
     yara_files = [
         os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", fname)
-        for fname in ["Exploit.yar", "ConventionEngine.yar", "red-is-sus.yar", "Signature.yar"]
+        for fname in ["Signature.yar", "Exploit.yar", "red-is-sus.yar"]
     ]
     custom_yara_path = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield", "Rules", "Custom.yar")
     if os.path.exists(custom_yara_path):
