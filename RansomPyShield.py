@@ -145,10 +145,10 @@ if __name__ == "__main__":
     save_directory = os.path.join(os.getenv('LOCALAPPDATA'), "RansomPyShield")
 
     try:
-        #print("Updating Hashes, Rules, Model...")
-        #gr.get_rules(rule, zip_rule, extract_to)
-        #gh.download_file_from_github(url, save_directory)
-        #start_hashes_update_thread()
+        print("Updating Hashes, Rules, Model...")
+        gr.get_rules(rule, zip_rule, extract_to)
+        gh.download_file_from_github(url, save_directory)
+        start_hashes_update_thread()
         main_ui()
     except Exception as e:
         print(e)
